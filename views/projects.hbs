@@ -1,0 +1,16 @@
+<h1>projects</h1>
+
+{{#if projects.length}}
+  <ul>
+    {{#each projects}}
+      <li>
+        {{title}}
+      </li>
+    {{/each}}
+  </ul>
+
+{{else}}
+
+  <p> wait for upcoming projects</p>
+
+{{/if}}
