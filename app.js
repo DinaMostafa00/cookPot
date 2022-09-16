@@ -22,4 +22,11 @@ app.get("/projects", function (request, response) {
   response.render("projects.hbs", model);
 });
 
+app.get("/projects/:id", function (request, response) {
+  const id = request.params.id;
+  const project = data.projects.find((project) => project.id == id);
+  const model = { project: project };
+  response.render("singleProject.hbs", model);
+});
+
 app.listen(8080);
