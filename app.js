@@ -42,8 +42,8 @@ app.get("/aboutme", function (request, response) {
 
 //////
 app.get("/projects/:id", function (request, response) {
-  const id = request.params.id;
-  const project = data.projects.find((project) => project.id == id);
+  const id = request.params.id; //to get the actual value of the id
+  const project = data.projects.find((project) => project.id == id); // we call a method on this array (find) to find a project whose id is equal to what stored in the id variable
   const model = { project: project };
   response.render("singleProject.hbs", model);
 });
