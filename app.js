@@ -3,6 +3,7 @@ const expressHandlebars = require("express-handlebars");
 const data = require("./data.js");
 const app = express();
 
+////
 app.engine(
   "hbs",
   expressHandlebars.engine({
@@ -12,6 +13,7 @@ app.engine(
 
 app.use(express.static("public"));
 
+///////
 app.get("/", function (request, response) {
   response.render("start.hbs");
 });
@@ -28,6 +30,15 @@ app.get("/blogs", function (request, response) {
   response.render("blogs.hbs", model);
 });
 
+app.get("/contactme", function (request, response) {
+  response.render("contactMe.hbs");
+});
+
+app.get("/aboutme", function (request, response) {
+  response.render("aboutMe.hbs");
+});
+
+//////
 app.get("/projects/:id", function (request, response) {
   const id = request.params.id;
   const project = data.projects.find((project) => project.id == id);
