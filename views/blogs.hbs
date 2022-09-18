@@ -1,0 +1,18 @@
+<h1>Blogs</h1>
+
+{{#if blogs.length}}
+  <ul>
+    {{#each blogs}}
+      <li>
+        <a href="/blogs/{{id}}">
+          {{title}}</a>
+
+      </li>
+    {{/each}}
+  </ul>
+
+{{else}}
+
+  <p> wait for upcoming blogs</p>
+
+{{/if}}

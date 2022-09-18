@@ -22,11 +22,24 @@ app.get("/projects", function (request, response) {
   response.render("projects.hbs", model);
 });
 
+app.get("/blogs", function (request, response) {
+  const model = { blogs: data.blogs };
+
+  response.render("blogs.hbs", model);
+});
+
 app.get("/projects/:id", function (request, response) {
   const id = request.params.id;
   const project = data.projects.find((project) => project.id == id);
   const model = { project: project };
   response.render("singleProject.hbs", model);
+});
+
+app.get("/blogs/:id", function (request, response) {
+  const id = request.params.id;
+  const blog = data.blogs.find((blog) => blog.id == id);
+  const model = { blog: blog };
+  response.render("singleBlog.hbs", model);
 });
 
 app.listen(8080);
