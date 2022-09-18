@@ -1,9 +1,10 @@
+/// loading
 const express = require("express");
 const expressHandlebars = require("express-handlebars");
 const data = require("./data.js");
 const app = express();
 
-////
+////engine
 app.engine(
   "hbs",
   expressHandlebars.engine({
@@ -11,6 +12,7 @@ app.engine(
   })
 );
 
+/// dstatic files
 app.use(express.static("public"));
 
 ///////
