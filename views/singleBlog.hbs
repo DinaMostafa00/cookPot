@@ -10,3 +10,27 @@
 {{else}}
   <p> this blog does not exist.</p>
 {{/if}}
+
+//////
+
+<h1>Leave comment here</h1>
+<form action="/blogs/:id" method="post">
+
+  <div>
+    Name:
+    <input type="text" name="name" />
+  </div>
+
+  <div>
+    Title:
+    <input type="text" name="title" />
+  </div>
+
+  <div>
+    Comment:
+    <input type="text" name="comment" />
+  </div>
+
+  <input type="submit" value="Create" />
+
+</form>

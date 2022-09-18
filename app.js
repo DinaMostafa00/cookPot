@@ -15,6 +15,13 @@ app.engine(
 /// dstatic files
 app.use(express.static("public"));
 
+///QQQ
+app.use(
+  express.urlencoded({
+    extended: false,
+  })
+);
+
 ///////
 app.get("/", function (request, response) {
   response.render("start.hbs");
@@ -40,7 +47,24 @@ app.get("/aboutme", function (request, response) {
   response.render("aboutMe.hbs");
 });
 
-//////
+//////post
+
+app.post("/blogs/:id", function (request, response) {
+  const name = request.body.name;
+  const title = request.body.title;
+  const comment = request.body.comment;
+
+  data.comments.push({
+    commentId: data.comments.at(-1).commentId + 1,
+    name: name,
+    title: title,
+    comment: comment,
+  });
+
+  response.redirect("/blogs/:id");
+});
+
+////get
 app.get("/projects/:id", function (request, response) {
   const id = request.params.id; //to get the actual value of the id
   const project = data.projects.find((project) => project.id == id); // we call a method on this array (find) to find a project whose id is equal to what stored in the id variable

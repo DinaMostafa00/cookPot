@@ -51,3 +51,5 @@ exports.blogs = [
     numberOfPhotos: 5,
   },
 ];
+
+exports.comments = [];
