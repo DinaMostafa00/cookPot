@@ -1,4 +1,4 @@
-exports.projects = [
+exports.recipes = [
   {
     id: 1,
     title: "Photography",

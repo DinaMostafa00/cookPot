@@ -27,10 +27,10 @@ app.get("/", function (request, response) {
   response.render("start.hbs");
 });
 
-app.get("/projects", function (request, response) {
-  const model = { projects: data.projects };
+app.get("/recipes", function (request, response) {
+  const model = { recipes: data.recipes };
 
-  response.render("projects.hbs", model);
+  response.render("recipes.hbs", model);
 });
 
 app.get("/blogs", function (request, response) {
@@ -53,6 +53,7 @@ app.post("/blogs/:id", function (request, response) {
   const name = request.body.name;
   const title = request.body.title;
   const comment = request.body.comment;
+  const id = request.params.id;
 
   data.comments.push({
     commentId: data.comments.length + 1,
@@ -62,15 +63,15 @@ app.post("/blogs/:id", function (request, response) {
   });
   console.log(data.comments);
 
-  response.redirect("/blogs/:id");
+  response.redirect("/blogs/" + id);
 });
 
 ////get
-app.get("/projects/:id", function (request, response) {
+app.get("/recipes/:id", function (request, response) {
   const id = request.params.id; //to get the actual value of the id
-  const project = data.projects.find((project) => project.id == id); // we call a method on this array (find) to find a project whose id is equal to what stored in the id variable
-  const model = { project: project };
-  response.render("singleProject.hbs", model);
+  const recipe = data.recipes.find((recipe) => recipe.id == id); // we call a method on this array (find) to find a project whose id is equal to what stored in the id variable
+  const model = { recipe: recipe };
+  response.render("singleRecipe.hbs", model);
 });
 
 app.get("/blogs/:id", function (request, response) {
