@@ -55,11 +55,12 @@ app.post("/blogs/:id", function (request, response) {
   const comment = request.body.comment;
 
   data.comments.push({
-    commentId: data.comments.at(-1).commentId + 1,
+    commentId: data.comments.length + 1,
     name: name,
     title: title,
     comment: comment,
   });
+  console.log(data.comments);
 
   response.redirect("/blogs/:id");
 });
@@ -75,7 +76,7 @@ app.get("/projects/:id", function (request, response) {
 app.get("/blogs/:id", function (request, response) {
   const id = request.params.id;
   const blog = data.blogs.find((blog) => blog.id == id);
-  const model = { blog: blog };
+  const model = { blog: blog, comments: data.comments };
   response.render("singleBlog.hbs", model);
 });
 
