@@ -1,8 +1,8 @@
 <h1>Blogs</h1>
 
-{{#if blogs.length}}
+{{#if blogPosts.length}}
   <ul>
-    {{#each blogs}}
+    {{#each blogPosts}}
       <li>
         <a href="/blogs/{{id}}">
           {{title}}</a>
@@ -13,6 +13,6 @@
 
 {{else}}
 
-  <p> wait for upcoming blogs</p>
+  <p> wait for upcoming projects</p>
 
 {{/if}}

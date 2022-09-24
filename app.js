@@ -58,7 +58,6 @@ app.get("/blogs", function (request, response) {
   const query = "SELECT * FROM blogPosts";
   db.all(query, function (error, blogPosts) {
     const model = { blogPosts };
-
     response.render("blogs.hbs", model);
   });
 });
@@ -75,20 +74,23 @@ app.get("/aboutme", function (request, response) {
 //////post
 
 app.post("/blogs/:id", function (request, response) {
-  const name = request.body.name;
+  const commenterName = request.body.commenterName;
   const title = request.body.title;
   const comment = request.body.comment;
   const id = request.params.id;
+  const query =
+    "INSERT INTO comments (commenterName, title, comment) value (?,?,?) ";
+  const values = [commenterName, title, comment];
 
-  data.comments.push({
-    commentId: data.comments.length + 1,
-    name: name,
-    title: title,
-    comment: comment,
+  db.run(query, values, function (error) {
+    response.redirect("/blogs/" + id);
   });
-  console.log(data.comments);
 
-  response.redirect("/blogs/" + id);
+  // data.comments.push({
+  //   commentId: data.comments.length + 1,
+  //   name: name,
+  //   title: title,
+  //   comment: comment,
 });
 
 ////get IDs
@@ -109,12 +111,12 @@ app.get("/recipes/:id", function (request, response) {
 app.get("/blogs/:id", function (request, response) {
   const id = request.params.id;
   const query = "SELECT * FROM blogPosts WHERE id= ?";
+  // const query = "SELECT * FROM comments";
   const values = [id];
-  db.get(query, values, function (error, blogPosts) {
-    const model = { blog };
+  db.get(query, values, function (error, blogPost, comments) {
+    const model = { blogPost, comments };
     response.render("singleBlog.hbs", model);
   });
-
   // const model = { blog: blog, comments: data.comments };
   // const blog = data.blogs.find((blog) => blog.id == id);
 });
