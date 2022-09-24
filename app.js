@@ -1,7 +1,7 @@
 /// loading
 const express = require("express");
 const expressHandlebars = require("express-handlebars");
-const data = require("./data.js");
+const data = require("./datanomore.js");
 const sqlite3 = require("sqlite3");
 
 const minCommenterNameLength = 2;
@@ -138,8 +138,8 @@ app.get("/recipes/:id", function (request, response) {
 ////////
 app.get("/blogs/:id", function (request, response) {
   const id = request.params.id;
-  const query = "SELECT * FROM blogPosts WHERE id= ?";
-  const query = "SELECT * FROM comments WHERE blogPostId= ? ";
+  const query = "SELECT * FROM blogPosts WHERE id= ? ";
+  // const query = "SELECT * FROM comments WHERE blogPostId= ? ";
   const values = [id];
   db.get(query, values, function (error, blogPost) {
     const model = { blogPost };
