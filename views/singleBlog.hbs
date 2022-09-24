@@ -17,6 +17,18 @@
 {{! ////// }}
 
 <h1>Leave comment here</h1>
+
+{{#if validationErrors.length}}
+  <p> Can not write a comment because:</p>
+
+  <ul>
+    {{#each validationErrors}}
+      {{this}}
+    {{/each}}
+  </ul>
+
+{{/if}}
+
 <form action="/blogs/{{blogPost.id}}" method="post">
 
   <div>

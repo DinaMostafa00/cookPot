@@ -2,8 +2,12 @@
 const express = require("express");
 const expressHandlebars = require("express-handlebars");
 const data = require("./data.js");
-
 const sqlite3 = require("sqlite3");
+
+const minCommenterNameLength = 2;
+const minTitleLength = 4;
+const minCommentLength = 3;
+
 const db = new sqlite3.Database("recipesDatabase.db");
 
 db.run(
@@ -78,13 +82,37 @@ app.post("/blogs/:id", function (request, response) {
   const title = request.body.title;
   const comment = request.body.comment;
   const id = request.params.id;
-  const query =
-    "INSERT INTO comments (commenterName, title, comment) value (?,?,?) ";
-  const values = [commenterName, title, comment];
 
-  db.run(query, values, function (error) {
-    response.redirect("/blogs/" + id);
-  });
+  const validationErrors = [];
+
+  if (minCommenterNameLength <= commenterName.length) {
+    validationErrors.push(
+      "Name should be at least" + minCommenterNameLength + " characters long."
+    );
+  }
+  if (minTitleLength <= title.length) {
+    validationErrors.push(
+      "Title should be at least" + minCommenterNameLength + " characters long."
+    );
+  }
+  if (minCommentLength <= title.length) {
+    validationErrors.push(
+      "Comment should be at least" + minCommentLength + " characters long."
+    );
+  }
+
+  if (validationErrors.length == 0) {
+    const query =
+      "INSERT INTO comments (commenterName, title, comment, blogPostId) value (?,?,?,?) ";
+    const values = [commenterName, title, comment, blogPostId];
+
+    db.run(query, values, function (error) {
+      response.redirect("/blogs/" + id);
+    });
+  } else {
+    const model = { validationErrors };
+    response.render("singleBlog.hbs", model);
+  }
 
   // data.comments.push({
   //   commentId: data.comments.length + 1,
@@ -111,10 +139,11 @@ app.get("/recipes/:id", function (request, response) {
 app.get("/blogs/:id", function (request, response) {
   const id = request.params.id;
   const query = "SELECT * FROM blogPosts WHERE id= ?";
-  // const query = "SELECT * FROM comments";
+  const query = "SELECT * FROM comments WHERE blogPostId= ? ";
   const values = [id];
-  db.get(query, values, function (error, blogPost, comments) {
-    const model = { blogPost, comments };
+  db.get(query, values, function (error, blogPost) {
+    const model = { blogPost };
+    // const model = { validationErrors [] }; WHYYYYY QQQQQQQQQQQQQQQQQ WHY CAN'T I PASS IT HERE
     response.render("singleBlog.hbs", model);
   });
   // const model = { blog: blog, comments: data.comments };
