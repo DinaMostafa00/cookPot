@@ -1,7 +1,7 @@
 /// loading
 const express = require("express");
 const expressHandlebars = require("express-handlebars");
-const data = require("./datanomore.js");
+// const data = require("./datanomore.js");
 const sqlite3 = require("sqlite3");
 
 const minCommenterNameLength = 2;
@@ -82,20 +82,21 @@ app.post("/blogs/:id", function (request, response) {
   const title = request.body.title;
   const comment = request.body.comment;
   const id = request.params.id;
+  const blogPostId = id; //////////////////////// ???????
 
   const validationErrors = [];
 
-  if (minCommenterNameLength <= commenterName.length) {
+  if (commenterName.length <= minCommenterNameLength) {
     validationErrors.push(
       "Name should be at least" + minCommenterNameLength + " characters long."
     );
   }
-  if (minTitleLength <= title.length) {
+  if (title.length <= minTitleLength) {
     validationErrors.push(
       "Title should be at least" + minCommenterNameLength + " characters long."
     );
   }
-  if (minCommentLength <= title.length) {
+  if (title.length <= minCommentLength) {
     validationErrors.push(
       "Comment should be at least" + minCommentLength + " characters long."
     );
@@ -110,15 +111,9 @@ app.post("/blogs/:id", function (request, response) {
       response.redirect("/blogs/" + id);
     });
   } else {
-    const model = { validationErrors };
+    const model = { validationErrors, commenterName, title, comment };
     response.render("singleBlog.hbs", model);
   }
-
-  // data.comments.push({
-  //   commentId: data.comments.length + 1,
-  //   name: name,
-  //   title: title,
-  //   comment: comment,
 });
 
 ////get IDs
