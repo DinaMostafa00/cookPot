@@ -5,21 +5,24 @@ const expressHandlebars = require("express-handlebars");
 const sqlite3 = require("sqlite3");
 
 const minCommenterNameLength = 2;
-const minTitleLength = 4;
-const minCommentLength = 3;
+const minTitleLength = 2;
+const minCommentLength = 2;
+
+const correctUsername = "admin";
+const correctPassword = "1234567";
 
 const db = new sqlite3.Database("recipesDatabase.db");
 
 db.run(
-  "CREATE TABLE IF NOT EXISTS recipes (id INTEGER PRIMARY KEY, title TEXT, description TEXT, ingredients TEXT, directions TEXT)"
+  "CREATE TABLE IF NOT EXISTS recipes (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, ingredients TEXT, directions TEXT)"
 );
 
 db.run(
-  "CREATE TABLE IF NOT EXISTS blogPosts (id INTEGER PRIMARY KEY, title TEXT, content TEXT, source TEXT)"
+  "CREATE TABLE IF NOT EXISTS blogPosts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, source TEXT)"
 );
 
 db.run(
-  "CREATE TABLE IF NOT EXISTS comments (id INTEGER PRIMARY KEY, commenterName TEXT, title TEXT, comment TEXT, blogPostId INTEGER, FOREIGN KEY (blogPostId) REFERENCES blogPosts(id) )"
+  "CREATE TABLE IF NOT EXISTS comments (id INTEGER PRIMARY KEY AUTOINCREMENT, commenterName TEXT, title TEXT, comment TEXT, blogPostId INTEGER, FOREIGN KEY (blogPostId) REFERENCES blogPosts(id) ON DELETE CASCADE)"
 );
 
 const app = express();
@@ -80,17 +83,17 @@ app.get("/aboutme", function (request, response) {
 function getValidationErrorsForBlogs(commenterName, title, comment) {
   const validationErrors = [];
 
-  if (commenterName.length <= minCommenterNameLength) {
+  if (commenterName.length < minCommenterNameLength) {
     validationErrors.push(
       "Name should be at least" + minCommenterNameLength + " characters long."
     );
   }
-  if (title.length <= minTitleLength) {
+  if (title.length < minTitleLength) {
     validationErrors.push(
       "Title should be at least" + minCommenterNameLength + " characters long."
     );
   }
-  if (comment.length <= minCommentLength) {
+  if (comment.length < minCommentLength) {
     validationErrors.push(
       "Comment should be at least" + minCommentLength + " characters long."
     );
@@ -133,6 +136,7 @@ app.post("/blogs/:id", function (request, response) {
           validationErrors,
           commenterName,
           title,
+          comment,
           comments,
           blogPost,
         };
@@ -146,6 +150,19 @@ app.post("/blogs/:id", function (request, response) {
 app.post("/deleteComment/:id", function (request, response) {
   const id = request.params.id;
   response.redirect("/blogs/" + id);
+});
+
+///post for login
+app.post("/login", function (request, response) {
+  const enteredUsername = request.body.username;
+  const enteredPassword = request.body.password;
+
+  if (
+    enteredUsername == correctUsername &&
+    enteredPassword == correctPassword
+  ) {
+  } else {
+  }
 });
 
 ////get IDs
@@ -176,6 +193,10 @@ app.get("/blogs/:id", function (request, response) {
 
     // const model = { blogPost, comments };
   });
+});
+
+app.get("/login", function (request, response) {
+  response.render("login.hbs");
 });
 
 app.listen(8080);
