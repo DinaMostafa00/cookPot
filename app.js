@@ -35,7 +35,7 @@ app.engine(
 /// dstatic files
 app.use(express.static("public"));
 
-///QQQ
+///QQQQQQQQQQQQQ
 app.use(
   express.urlencoded({
     extended: false,
@@ -75,15 +75,9 @@ app.get("/aboutme", function (request, response) {
   response.render("aboutMe.hbs");
 });
 
-//////post
+////// POST REQUESTSSSSS
 
-app.post("/blogs/:id", function (request, response) {
-  const commenterName = request.body.commenterName;
-  const title = request.body.title;
-  const comment = request.body.comment;
-  const id = request.params.id;
-  const blogPostId = id; //////////////////////// ???????
-
+function getValidationErrorsForBlogs(commenterName, title, comment) {
   const validationErrors = [];
 
   if (commenterName.length <= minCommenterNameLength) {
@@ -96,24 +90,62 @@ app.post("/blogs/:id", function (request, response) {
       "Title should be at least" + minCommenterNameLength + " characters long."
     );
   }
-  if (title.length <= minCommentLength) {
+  if (comment.length <= minCommentLength) {
     validationErrors.push(
       "Comment should be at least" + minCommentLength + " characters long."
     );
   }
+  return validationErrors;
+}
+
+app.post("/blogs/:id", function (request, response) {
+  const commenterName = request.body.commenterName;
+  const title = request.body.title;
+  const comment = request.body.comment;
+  const blogPostId = request.params.id;
+
+  const validationErrors = getValidationErrorsForBlogs(
+    commenterName,
+    title,
+    comment
+  );
+  ////we also pass it the update when you get there just pass it new parameters to watch this again tutorial 3 (33:35)
 
   if (validationErrors.length == 0) {
     const query =
-      "INSERT INTO comments (commenterName, title, comment, blogPostId) value (?,?,?,?) ";
+      "INSERT INTO comments (commenterName, title, comment, blogPostId) values (?,?,?,?) ";
     const values = [commenterName, title, comment, blogPostId];
 
     db.run(query, values, function (error) {
-      response.redirect("/blogs/" + id);
+      console.log(error);
+
+      response.redirect("/blogs/" + blogPostId);
     });
   } else {
-    const model = { validationErrors, commenterName, title, comment };
-    response.render("singleBlog.hbs", model);
+    /////// the same from the get request to fetc
+    const querySelectBlogPost = "SELECT * FROM blogPosts WHERE id= ? ";
+    const querySelectComments = "SELECT * FROM comments WHERE blogPostId= ? ";
+    const values = [blogPostId];
+    db.get(querySelectBlogPost, values, function (error, blogPost) {
+      db.all(querySelectComments, values, function (error, comments) {
+        // const model = { blogPost, comments };
+        const model = {
+          validationErrors,
+          commenterName,
+          title,
+          comments,
+          blogPost,
+        };
+
+        response.render("singleBlog.hbs", model);
+      });
+    });
   }
+});
+
+app.post("/deleteComment/:id", function (request, response) {
+  const id = request.params.id;
+  response.redirect("/blogs/" + id);
 });
 
 ////get IDs
@@ -133,16 +165,17 @@ app.get("/recipes/:id", function (request, response) {
 ////////
 app.get("/blogs/:id", function (request, response) {
   const id = request.params.id;
-  const query = "SELECT * FROM blogPosts WHERE id= ? ";
-  // const query = "SELECT * FROM comments WHERE blogPostId= ? ";
+  const querySelectBlogPost = "SELECT * FROM blogPosts WHERE id= ? ";
+  const querySelectComments = "SELECT * FROM comments WHERE blogPostId= ? ";
   const values = [id];
-  db.get(query, values, function (error, blogPost) {
-    const model = { blogPost };
-    // const model = { validationErrors [] }; WHYYYYY QQQQQQQQQQQQQQQQQ WHY CAN'T I PASS IT HERE
-    response.render("singleBlog.hbs", model);
+  db.get(querySelectBlogPost, values, function (error, blogPost) {
+    db.all(querySelectComments, values, function (error, comments) {
+      const model = { blogPost, comments };
+      response.render("singleBlog.hbs", model);
+    });
+
+    // const model = { blogPost, comments };
   });
-  // const model = { blog: blog, comments: data.comments };
-  // const blog = data.blogs.find((blog) => blog.id == id);
 });
 
 app.listen(8080);
