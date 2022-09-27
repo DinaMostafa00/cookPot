@@ -14,7 +14,7 @@ const correctPassword = "1234567";
 const db = new sqlite3.Database("recipesDatabase.db");
 
 db.run(
-  "CREATE TABLE IF NOT EXISTS recipes (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, ingredients TEXT, directions TEXT)"
+  "CREATE TABLE IF NOT EXISTS recipes (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, ingredients TEXT, directions TEXT, duration TEXT, calories TEXT)"
 );
 
 db.run(
