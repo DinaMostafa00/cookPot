@@ -1,14 +1,16 @@
 /// loading
+const { request } = require("express");
 const express = require("express");
 const expressHandlebars = require("express-handlebars");
 // const data = require("./datanomore.js");
 const sqlite3 = require("sqlite3");
+const expressSession = require("express-session");
 
 const minCommenterNameLength = 2;
 const minTitleLength = 2;
 const minCommentLength = 2;
 
-const correctUsername = "admin";
+const correctUsername = "dina";
 const correctPassword = "1234567";
 
 const db = new sqlite3.Database("recipesDatabase.db");
@@ -26,6 +28,17 @@ db.run(
 );
 
 const app = express();
+
+//// watch again 58:59
+app.use(
+  expressSession({
+    secret: "asdfghjkloiuytrezxcvbnm",
+    //control if the session is empty should be still stored in server side or not
+    saveUninitialized: false,
+    //if the new session be stored in server oor not
+    resave: false,
+  })
+);
 
 ////engine
 app.engine(
@@ -161,7 +174,10 @@ app.post("/login", function (request, response) {
     enteredUsername == correctUsername &&
     enteredPassword == correctPassword
   ) {
+    request.session.isLoggedIn = true;
+    response.redirect("/");
   } else {
+    response.redirect("/login");
   }
 });
 
