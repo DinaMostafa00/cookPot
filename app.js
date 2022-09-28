@@ -195,7 +195,7 @@ app.post("/createRecipe", function (request, response) {
   db.run(query, values, function (error) {
     console.log(error);
 
-    response.redirect("recipies.hbs");
+    response.redirect("/recipes");
   });
 });
 
@@ -211,7 +211,7 @@ app.post("/createBlogPost", function (request, response) {
   db.run(query, values, function (error) {
     console.log(error);
 
-    response.redirect("blogs.hbs");
+    response.redirect("/blogs");
   });
 });
 
