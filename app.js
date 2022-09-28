@@ -1,5 +1,5 @@
 /// loading
-const { request } = require("express");
+// const { request } = require("express");
 const express = require("express");
 const expressHandlebars = require("express-handlebars");
 // const data = require("./datanomore.js");
@@ -11,7 +11,7 @@ const minTitleLength = 2;
 const minCommentLength = 2;
 
 const correctUsername = "dina";
-const correctPassword = "1234567";
+const correctPassword = "123";
 
 const db = new sqlite3.Database("recipesDatabase.db");
 
@@ -57,6 +57,17 @@ app.use(
     extended: false,
   })
 );
+
+////our own middle ware for logging in - instead of writting it everywhere
+//// it will run everytime we recieve an http request
+
+app.use(function (request, response, next) {
+  const isLoggedIn = request.session.isLoggedIn;
+  response.locals.isLoggedIn = isLoggedIn;
+  //local is obj where we can add info to to be read by our views
+  next();
+  //next to invoke the next middleware
+});
 
 ///////
 app.get("/", function (request, response) {
@@ -141,6 +152,7 @@ app.post("/blogs/:id", function (request, response) {
     /////// the same from the get request to fetc
     const querySelectBlogPost = "SELECT * FROM blogPosts WHERE id= ? ";
     const querySelectComments = "SELECT * FROM comments WHERE blogPostId= ? ";
+    /////QQQ HERE
     const values = [blogPostId];
     db.get(querySelectBlogPost, values, function (error, blogPost) {
       db.all(querySelectComments, values, function (error, comments) {
@@ -165,7 +177,7 @@ app.post("/deleteComment/:id", function (request, response) {
   response.redirect("/blogs/" + id);
 });
 
-///post for login
+/// POSSTTT  for login
 app.post("/login", function (request, response) {
   const enteredUsername = request.body.username;
   const enteredPassword = request.body.password;
@@ -177,8 +189,15 @@ app.post("/login", function (request, response) {
     request.session.isLoggedIn = true;
     response.redirect("/");
   } else {
-    response.redirect("/login");
+    response.redirect("/login"); /// WITH AN ERROR MSG THAT I WILL ADD LATER
   }
+});
+
+///post for logout
+/////SHOULD BE POST NOT GET BECAUSE THERE'S CHANGES MADE TO THE SESSION
+app.post("/logout", function (request, response) {
+  request.session.isLoggedIn = false;
+  response.redirect("/");
 });
 
 ////get IDs
@@ -215,4 +234,7 @@ app.get("/login", function (request, response) {
   response.render("login.hbs");
 });
 
+app.get("/logout", function (request, response) {
+  response.render("logout.hbs");
+});
 app.listen(8080);

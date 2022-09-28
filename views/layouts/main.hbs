@@ -15,7 +15,12 @@
         <a href="/blogs">Blogs</a>
         <a href="/aboutme">About Me</a>
         <a href="/contactme">Contact Me</a>
-        <a href="/login">Login</a>
+        {{#unless isLoggedIn}}
+          <a href="/login">Login</a>
+        {{/unless}}
+        {{#if isLoggedIn}}
+          <a href="/logout">Logout</a>
+        {{/if}}
       </nav>
 
     </header>
