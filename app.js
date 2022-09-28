@@ -172,6 +172,49 @@ app.post("/blogs/:id", function (request, response) {
   }
 });
 
+///// post for create
+app.post("/createRecipe", function (request, response) {
+  const title = request.body.title;
+  const description = request.body.description;
+  const ingredients = request.body.ingredients;
+  const directions = request.body.directions;
+  const duration = request.body.duration;
+  const calories = request.body.calories;
+
+  const query =
+    "INSERT INTO recipes (title, description, ingredients, directions, duration, calories) values (?,?,?,?,?,?) ";
+  const values = [
+    title,
+    description,
+    ingredients,
+    directions,
+    duration,
+    calories,
+  ];
+
+  db.run(query, values, function (error) {
+    console.log(error);
+
+    response.redirect("recipies.hbs");
+  });
+});
+
+app.post("/createBlogPost", function (request, response) {
+  const title = request.body.title;
+  const content = request.body.content;
+  const source = request.body.source;
+
+  const query =
+    "INSERT INTO blogPosts (title, content, source) values (?,?,?) ";
+  const values = [title, content, source];
+
+  db.run(query, values, function (error) {
+    console.log(error);
+
+    response.redirect("blogs.hbs");
+  });
+});
+
 app.post("/deleteComment/:id", function (request, response) {
   const id = request.params.id;
   response.redirect("/blogs/" + id);
@@ -237,4 +280,13 @@ app.get("/login", function (request, response) {
 app.get("/logout", function (request, response) {
   response.render("logout.hbs");
 });
+
+app.get("/createRecipe", function (request, response) {
+  response.render("createRecipe.hbs");
+});
+
+app.get("/createBlogPost", function (request, response) {
+  response.render("createBlogPost.hbs");
+});
+
 app.listen(8080);
