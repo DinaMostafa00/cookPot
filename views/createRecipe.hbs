@@ -1,4 +1,14 @@
 <h1>Create a recipe</h1>
+{{#if errors.length}}
+  <p> Can not create a recipe because:</p>
+
+  <ul>
+    {{#each errors}}
+      {{this}}
+    {{/each}}
+  </ul>
+
+{{/if}}
 
 <form action="/createRecipe" method="post">
 

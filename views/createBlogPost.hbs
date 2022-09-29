@@ -1,4 +1,14 @@
 <h1>Create a Blog Post </h1>
+{{#if errors.length}}
+  <p> Can not create a blog post because:</p>
+
+  <ul>
+    {{#each errors}}
+      {{this}}
+    {{/each}}
+  </ul>
+
+{{/if}}
 
 <form action="/createBlogPost" method="post">
 

@@ -15,6 +15,8 @@ const correctPassword = "123";
 
 const db = new sqlite3.Database("recipesDatabase.db");
 
+db.run("PRAGMA foreign_keys = ON");
+
 db.run(
   "CREATE TABLE IF NOT EXISTS recipes (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, ingredients TEXT, directions TEXT, duration TEXT, calories TEXT)"
 );
@@ -104,7 +106,9 @@ app.get("/aboutme", function (request, response) {
 
 ////// POST REQUESTSSSSS
 
-function getValidationErrorsForBlogs(commenterName, title, comment) {
+/////ERRORS SECTION
+//COMMENTS
+function getValidationErrorsForComments(commenterName, title, comment) {
   const validationErrors = [];
 
   if (commenterName.length < minCommenterNameLength) {
@@ -125,13 +129,63 @@ function getValidationErrorsForBlogs(commenterName, title, comment) {
   return validationErrors;
 }
 
+///BLOG
+function getValidationErrorsForBlog(title, content, source) {
+  const validationErrors = [];
+
+  if (title.length == 0) {
+    validationErrors.push("Title field can't be empty");
+  }
+  if (content.length == 0) {
+    validationErrors.push("Content field can't be empty");
+  }
+  if (source.length == 0) {
+    validationErrors.push("Source field can't be empty");
+  }
+  return validationErrors;
+}
+
+//POSTS
+function getValidationErrorsForrecipes(
+  title,
+  description,
+  ingredients,
+  directions,
+  duration,
+  calories
+) {
+  const validationErrors = [];
+
+  if (title.length == 0) {
+    validationErrors.push("Title field can't be empty");
+  }
+  if (description.length == 0) {
+    validationErrors.push("description field can't be empty");
+  }
+  if (ingredients.length == 0) {
+    validationErrors.push("ingredients field can't be empty");
+  }
+  if (directions.length == 0) {
+    validationErrors.push("directions field can't be empty");
+  }
+  if (duration.length == 0) {
+    validationErrors.push("duration field can't be empty");
+  }
+  if (calories.length == 0) {
+    validationErrors.push("calories field can't be empty");
+  }
+  return validationErrors;
+}
+
+//////////////END OF ERRORS
+
 app.post("/blogs/:id", function (request, response) {
   const commenterName = request.body.commenterName;
   const title = request.body.title;
   const comment = request.body.comment;
   const blogPostId = request.params.id;
 
-  const validationErrors = getValidationErrorsForBlogs(
+  const validationErrors = getValidationErrorsForComments(
     commenterName,
     title,
     comment
@@ -172,7 +226,7 @@ app.post("/blogs/:id", function (request, response) {
   }
 });
 
-///// post for create
+/////POST FOR CREATE
 app.post("/createRecipe", function (request, response) {
   const title = request.body.title;
   const description = request.body.description;
@@ -181,22 +235,44 @@ app.post("/createRecipe", function (request, response) {
   const duration = request.body.duration;
   const calories = request.body.calories;
 
-  const query =
-    "INSERT INTO recipes (title, description, ingredients, directions, duration, calories) values (?,?,?,?,?,?) ";
-  const values = [
+  const errors = getValidationErrorsForrecipes(
     title,
     description,
     ingredients,
     directions,
     duration,
-    calories,
-  ];
+    calories
+  );
 
-  db.run(query, values, function (error) {
-    console.log(error);
+  if (errors.length == 0) {
+    const query =
+      "INSERT INTO recipes (title, description, ingredients, directions, duration, calories) values (?,?,?,?,?,?) ";
+    const values = [
+      title,
+      description,
+      ingredients,
+      directions,
+      duration,
+      calories,
+    ];
 
-    response.redirect("/recipes");
-  });
+    db.run(query, values, function (error) {
+      console.log(error);
+
+      response.redirect("/recipes");
+    });
+  } else {
+    const model = {
+      errors,
+      title,
+      description,
+      ingredients,
+      directions,
+      duration,
+      calories,
+    };
+    response.render("createRecipe.hbs", model);
+  }
 });
 
 app.post("/createBlogPost", function (request, response) {
@@ -204,15 +280,28 @@ app.post("/createBlogPost", function (request, response) {
   const content = request.body.content;
   const source = request.body.source;
 
-  const query =
-    "INSERT INTO blogPosts (title, content, source) values (?,?,?) ";
-  const values = [title, content, source];
+  //vid 3 - 1:21:40 REMMBER TO WATCH
 
-  db.run(query, values, function (error) {
-    console.log(error);
+  const errors = getValidationErrorsForBlog(title, content, source);
+  if (errors.length == 0) {
+    const query =
+      "INSERT INTO blogPosts (title, content, source) values (?,?,?) ";
+    const values = [title, content, source];
 
-    response.redirect("/blogs");
-  });
+    db.run(query, values, function (error) {
+      console.log(error);
+
+      response.redirect("/blogs");
+    });
+  } else {
+    const model = {
+      errors,
+      title,
+      content,
+      source,
+    };
+    response.render("createBlogPost.hbs", model);
+  }
 });
 
 app.post("/deleteComment/:id", function (request, response) {
