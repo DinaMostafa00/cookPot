@@ -64,10 +64,19 @@
 
       {{! /// to delete }}
 
-      <form action="/deleteComment/{{comment.id}}" method="POST">
-        <input type="submit" value="delete" />
-      </form>
+      {{#if ../isLoggedIn}}
+        <form action="/deleteComment/{{id}}" method="POST">
+          <input type="submit" value="delete" />
+        </form>
 
+          <form action="/updateComment/{{id}}" method="POST">
+          <input type="submit" value="update" />
+        </form>
+      {{/if}}
+
+     
+      
+    
     {{/each}}
   </ul>
 {{else}}

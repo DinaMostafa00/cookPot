@@ -272,9 +272,40 @@ app.post("/createBlogPost", function (request, response) {
   }
 });
 
+app.post("/updateComment/:id", function (request, response) {
+  const id = request.params.id;
+  const title = request.body.title;
+  const description = request.body.description;
+  const ingredients = request.body.ingredients;
+  const directions = request.body.directions;
+  const duration = request.body.duration;
+  const calories = request.body.calories;
+
+  const query =
+    "UPDATE comments SET title = ?, description = ?, ingredients = ? , directions = ?, duration = ? calories = ? WHERE id = ?";
+  const values = [
+    id,
+    title,
+    description,
+    ingredients,
+    directions,
+    duration,
+    calories,
+  ];
+
+  db.run(query, values, function (error) {
+    response.redirect("/recipes/" + id);
+  });
+});
+
 app.post("/deleteComment/:id", function (request, response) {
   const id = request.params.id;
-  response.redirect("/blogs/" + id);
+  const query = "DELETE FROM comments WHERE id=?";
+  const values = [id];
+
+  db.run(query, values, function (error) {
+    response.redirect("/blogs/" + id);
+  });
 });
 
 /// POSSTTT  for login
@@ -373,6 +404,10 @@ app.get("/createRecipe", function (request, response) {
 
 app.get("/createBlogPost", function (request, response) {
   response.render("createBlogPost.hbs");
+});
+
+app.get("/updateComment/:id", function (request, response) {
+  response.render("updateComment.hbs");
 });
 
 app.listen(8080);
