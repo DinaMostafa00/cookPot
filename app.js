@@ -1,18 +1,18 @@
-/// loading
-// const { request } = require("express");
+/// loading section
 const express = require("express");
 const expressHandlebars = require("express-handlebars");
-// const data = require("./datanomore.js");
 const sqlite3 = require("sqlite3");
 const expressSession = require("express-session");
 
+///variables
 const minCommenterNameLength = 2;
 const minTitleLength = 2;
 const minCommentLength = 2;
-
 const correctUsername = "dina";
 const correctPassword = "123";
+const app = express();
 
+///database and SQLITE
 const db = new sqlite3.Database("recipesDatabase.db");
 
 db.run("PRAGMA foreign_keys = ON");
@@ -29,7 +29,7 @@ db.run(
   "CREATE TABLE IF NOT EXISTS comments (id INTEGER PRIMARY KEY AUTOINCREMENT, commenterName TEXT, title TEXT, comment TEXT, blogPostId INTEGER, FOREIGN KEY (blogPostId) REFERENCES blogPosts(id) ON DELETE CASCADE)"
 );
 
-const app = express();
+//////Middleware section
 
 //// watch again 58:59
 app.use(
@@ -50,7 +50,7 @@ app.engine(
   })
 );
 
-/// dstatic files
+/// static files
 app.use(express.static("public"));
 
 ///QQQQQQQQQQQQQ
@@ -71,42 +71,8 @@ app.use(function (request, response, next) {
   //next to invoke the next middleware
 });
 
-///////
-app.get("/", function (request, response) {
-  response.render("start.hbs");
-});
+/////ERRORS SECTION///////////
 
-///recipes
-app.get("/recipes", function (request, response) {
-  const query = "SELECT * FROM recipes";
-  db.all(query, function (error, recipes) {
-    const model = { recipes };
-    response.render("recipes.hbs", model);
-  });
-});
-
-////////
-
-app.get("/blogs", function (request, response) {
-  const query = "SELECT * FROM blogPosts";
-  db.all(query, function (error, blogPosts) {
-    const model = { blogPosts };
-    response.render("blogs.hbs", model);
-  });
-});
-////////
-
-app.get("/contactme", function (request, response) {
-  response.render("contactMe.hbs");
-});
-
-app.get("/aboutme", function (request, response) {
-  response.render("aboutMe.hbs");
-});
-
-////// POST REQUESTSSSSS
-
-/////ERRORS SECTION
 //COMMENTS
 function getValidationErrorsForComments(commenterName, title, comment) {
   const validationErrors = [];
@@ -178,6 +144,8 @@ function getValidationErrorsForrecipes(
 }
 
 //////////////END OF ERRORS
+
+////// POST REQUESTSSSSS///////////////////////
 
 app.post("/blogs/:id", function (request, response) {
   const commenterName = request.body.commenterName;
@@ -332,8 +300,39 @@ app.post("/logout", function (request, response) {
   response.redirect("/");
 });
 
-////get IDs
+/////// ALLL THE GET REQ ARE HERE////////////////////////////
 
+app.get("/", function (request, response) {
+  response.render("start.hbs");
+});
+
+///recipes
+app.get("/recipes", function (request, response) {
+  const query = "SELECT * FROM recipes";
+  db.all(query, function (error, recipes) {
+    const model = { recipes };
+    response.render("recipes.hbs", model);
+  });
+});
+
+//BLOG PAGE
+app.get("/blogs", function (request, response) {
+  const query = "SELECT * FROM blogPosts";
+  db.all(query, function (error, blogPosts) {
+    const model = { blogPosts };
+    response.render("blogs.hbs", model);
+  });
+});
+
+app.get("/contactme", function (request, response) {
+  response.render("contactMe.hbs");
+});
+
+app.get("/aboutme", function (request, response) {
+  response.render("aboutMe.hbs");
+});
+
+////get IDs
 app.get("/recipes/:id", function (request, response) {
   const id = request.params.id; //to get the actual value of the id
   const query = "SELECT * FROM recipes WHERE id= ?";
@@ -357,8 +356,6 @@ app.get("/blogs/:id", function (request, response) {
       const model = { blogPost, comments };
       response.render("singleBlog.hbs", model);
     });
-
-    // const model = { blogPost, comments };
   });
 });
 
