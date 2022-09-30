@@ -65,13 +65,9 @@
       {{! /// to delete }}
 
       {{#if ../isLoggedIn}}
-        <form action="/deleteComment/{{id}}" method="POST">
-          <input type="submit" value="delete" />
-        </form>
-
-          <form action="/updateComment/{{id}}" method="POST">
-          <input type="submit" value="update" />
-        </form>
+        
+          <a href="/deleteComment/{{id}}/{{../blogPost.id}}">Delete Comment</a>
+        <a href="/updateComment/{{id}}/{{../blogPost.id}}/{{commenterName}}/{{title}}/{{comment}}">update Comment</a>
       {{/if}}
 
      

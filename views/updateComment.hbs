@@ -1,32 +1,20 @@
-  <form action="/updateComment/{{id}}" method="POST">
+  <h1>Update Comment</h1>
+  
+  <form action="/updateComment/{{id}}/{{blogPostId}}" method="POST">
   <div>
-    Add title:
+    update Name:
+    <input type="text" name="commenterName" value="{{commenterName}}" />
+  </div>
+
+  <div>
+    update title:
     <input type="text" name="title" value="{{title}}" />
   </div>
 
   <div>
-    Add description:
-    <input type="text" name="description" value="{{description}}" />
-  </div>
-
-  <div>
-    Add ingredients:
-    <input type="text" name="ingredients" value="{{ingredients}}" />
-  </div>
-
-  <div>
-    Add directions:
-    <input type="text" name="directions" value="{{directions}}" />
-  </div>
-
-  <div>
-    Add duration:
-    <input type="text" name="duration" value="{{duration}}" />
-  </div>
-
-  <div>
-    Add calories:
-    <input type="text" name="calories" value="{{calories}}" />
+    update comment:
+    <input type="text" name="comment" value="{{comment}}" />
   </div>
 
   <input type="submit" value="update" />
+
