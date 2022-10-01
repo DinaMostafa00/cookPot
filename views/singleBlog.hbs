@@ -10,6 +10,13 @@
     {{blogPost.source}}
   </p>
 
+  {{! /// to delete }}
+
+      {{#if isLoggedIn}}
+          <a href="/deleteBlogPost/{{blogPost.id}}">Delete blog post</a>
+        <a href="/updateBlogPost/{{blogPost.id}}">update blog post</a>
+      {{/if}}
+
 {{else}}
   <p> this blog does not exist.</p>
 {{/if}}
@@ -67,7 +74,7 @@
       {{#if ../isLoggedIn}}
         
           <a href="/deleteComment/{{id}}/{{../blogPost.id}}">Delete Comment</a>
-        <a href="/updateComment/{{id}}/{{../blogPost.id}}/{{commenterName}}/{{title}}/{{comment}}">update Comment</a>
+        <a href="/updateComment/{{id}}/{{../blogPost.id}}">update Comment</a>
       {{/if}}
 
      

@@ -2,35 +2,35 @@
    <h1>Update Recipe</h1>
  
  
- <form action="/updateRecipe/{{id}}" method="POST">
+ <form action="/updateRecipe/{{id}}" method="post">
   <div>
     update title:
-    <input type="text" name="title" value="{{title}}" />
+    <input type="text" name="title" value="{{recipe.title}}" />
   </div>
 
   <div>
     update description:
-    <input type="text" name="description" value="{{description}}" />
+    <input type="text" name="description" value="{{recipe.description}}" />
   </div>
 
   <div>
     update ingredients:
-    <input type="text" name="ingredients" value="{{ingredients}}" />
+    <input type="text" name="ingredients" value="{{recipe.ingredients}}" />
   </div>
 
  <div>
     update directions:
-    <input type="text" name="directions" value="{{directions}}" />
+    <input type="text" name="directions" value="{{recipe.directions}}" />
   </div>
 
   <div>
     update duration:
-    <input type="text" name="duration" value="{{duration}}" />
+    <input type="text" name="duration" value="{{recipe.duration}}" />
   </div>
 
   <div>
     update calories:
-    <input type="text" name="calories" value="{{calories}}" />
+    <input type="text" name="calories" value="{{recipe.calories}}" />
   </div>
 
   <input type="submit" value="update" />

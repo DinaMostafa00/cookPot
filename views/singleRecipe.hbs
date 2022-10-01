@@ -10,8 +10,8 @@
   <p>{{recipe.calories}}</p>
 
   {{#if isLoggedIn}}
-    <a href="/deleteRecipe/{{id}}">Delete recipe</a>
-    <a href="/updateRecipe/{{id}}">update recipes</a>
+    <a href="/deleteRecipe/{{recipe.id}}">Delete recipe</a>
+    <a href="/updateRecipe/{{recipe.id}}">update recipes</a>
   {{/if}}
 
 {{else}}

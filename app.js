@@ -272,32 +272,43 @@ app.post("/createBlogPost", function (request, response) {
   }
 });
 
-// app.post("/updateRecipe/:id", function (request, response) {
-//   const id = request.params.id;
-//   const title = request.body.title;
-//   const description = request.body.description;
-//   const ingredients = request.body.ingredients;
-//   const directions = request.body.directions;
-//   const duration = request.body.duration;
-//   const calories = request.body.calories;
+app.post("/deleteRecipe/:id", function (request, response) {
+  const id = request.params.id;
+  const query = "DELETE FROM recipes WHERE id=?";
+  const values = [id];
+  console.log(values);
+  db.run(query, values, function (error) {
+    response.redirect("/recipes/");
+  });
+});
 
-//   const query =
-//     "UPDATE recipes SET title = ?, description = ?, ingredients = ? , directions = ?, duration = ? calories = ? WHERE id = ?";
-//   const values = [
-//     id,
-//     title,
-//     description,
-//     ingredients,
-//     directions,
-//     duration,
-//     calories,
-//   ];
+app.post("/updateRecipe/:id", function (request, response) {
+  const id = request.params.id;
+  const title = request.body.title;
+  const description = request.body.description;
+  const ingredients = request.body.ingredients;
+  const directions = request.body.directions;
+  const duration = request.body.duration;
+  const calories = request.body.calories;
 
-//   db.run(query, values, function (error) {
-//     response.redirect("/recipes/" + id);
-//   });
-// });
+  const query =
+    "UPDATE recipes SET title = ?, description = ?, ingredients = ? , directions = ?, duration = ?, calories = ? WHERE id = ?";
+  const values = [
+    title,
+    description,
+    ingredients,
+    directions,
+    duration,
+    calories,
+    id,
+  ];
 
+  db.run(query, values, function (error) {
+    response.redirect("/recipes/" + id);
+  });
+});
+
+//////// I HAVE A QUESTION HERE
 app.post("/updateComment/:id/:blogPostId", function (request, response) {
   const id = request.params.id;
   const blogPostId = request.params.blogPostId;
@@ -308,6 +319,7 @@ app.post("/updateComment/:id/:blogPostId", function (request, response) {
     "UPDATE comments SET commenterName = ?, title = ?, comment = ? WHERE id = ?";
   const values = [commenterName, title, comment, id];
   db.run(query, values, function (error) {
+    console.log(error);
     response.redirect("/blogs/" + blogPostId);
   });
 });
@@ -317,9 +329,34 @@ app.post("/deleteComment/:id/:blogPostId", function (request, response) {
   const blogPostId = request.params.blogPostId;
   const query = "DELETE FROM comments WHERE id=?";
   const values = [id];
-  console.log(values);
+  // console.log(values);
   db.run(query, values, function (error) {
     response.redirect("/blogs/" + blogPostId);
+  });
+});
+
+app.post("/deleteBlogPost/:id", function (request, response) {
+  const id = request.params.id;
+  const query = "DELETE FROM blogPosts WHERE id=?";
+  const values = [id];
+  // console.log(values);
+  db.run(query, values, function (error) {
+    response.redirect("/blogs");
+  });
+});
+
+app.post("/updateBlogPost/:id", function (request, response) {
+  const id = request.params.id;
+  const title = request.body.title;
+  const content = request.body.content;
+  const source = request.body.source;
+
+  const query =
+    "UPDATE blogPosts SET title = ?, content = ?, source = ?  WHERE id = ?";
+  const values = [title, content, source, id];
+
+  db.run(query, values, function (error) {
+    response.redirect("/blogs/" + id);
   });
 });
 
@@ -431,29 +468,57 @@ app.get("/deleteComment/:id/:blogPostId", function (request, response) {
   response.render("deleteComment.hbs", model);
 });
 
-app.get(
-  "/updateComment/:id/:blogPostId/:commenterName/:title/:comment",
-  function (request, response) {
-    const id = request.params.id;
-    const blogPostId = request.params.blogPostId;
-    const commenterName = request.params.commenterName;
-    const title = request.params.title;
-    const comment = request.params.comment;
+app.get("/updateComment/:id/:blogPostId/", function (request, response) {
+  const id = request.params.id;
+  const blogPostId = request.params.blogPostId;
 
+  const query = "SELECT * FROM comments WHERE id=?";
+  const values = [id];
+  db.get(query, values, function (error, comment) {
     const model = {
       id,
-      blogPostId,
-      commenterName,
-      title,
       comment,
     };
     response.render("updateComment.hbs", model);
-  }
-);
+  });
+});
 
 app.get("/updateRecipe/:id", function (request, response) {
   const id = request.params.id;
-  response.render("updateRecipe.hbs");
+  const query = "SELECT * FROM recipes WHERE id = ?";
+  const values = [id];
+
+  db.get(query, values, function (error, recipe) {
+    const model = { recipe, id };
+    response.render("updateRecipe.hbs", model);
+  });
+});
+
+app.get("/deleteRecipe/:id", function (request, response) {
+  const id = request.params.id;
+  const model = {
+    id,
+  };
+  response.render("deleteRecipe.hbs", model);
+});
+
+app.get("/deleteBlogPost/:id", function (request, response) {
+  const id = request.params.id;
+  const model = {
+    id,
+  };
+  response.render("deleteBlogPost.hbs", model);
+});
+
+app.get("/updateBlogPost/:id", function (request, response) {
+  const id = request.params.id;
+  const query = "SELECT * FROM blogPosts WHERE id = ?";
+  const values = [id];
+
+  db.get(query, values, function (error, blogPost) {
+    const model = { blogPost, id };
+    response.render("updateBlogPost.hbs", model);
+  });
 });
 
 app.listen(8080);

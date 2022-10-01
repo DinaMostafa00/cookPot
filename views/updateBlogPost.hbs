@@ -1,0 +1,20 @@
+<h1>Update Blog Post </h1>
+ 
+ 
+ <form action="/updateBlogPost/{{blogPost.id}}" method="POST">
+  <div>
+    update title:
+    <input type="text" name="title" value="{{blogPost.title}}" />
+  </div>
+
+  <div>
+    update content:
+    <input type="text" name="content" value="{{blogPost.content}}" />
+  </div>
+
+  <div>
+    update source:
+    <input type="text" name="source" value="{{blogPost.source}}" />
+  </div>
+
+  <input type="submit" value="update" />
