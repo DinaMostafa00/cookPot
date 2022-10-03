@@ -241,9 +241,22 @@ app.post("/createRecipe", function (request, response) {
     ];
 
     db.run(query, values, function (error) {
-      console.log(error);
-
-      response.redirect("/recipes");
+      if (error) {
+        console.log(error);
+        errors.push("can't load due to internal server error");
+        const model = {
+          errors,
+          title,
+          description,
+          ingredients,
+          directions,
+          duration,
+          calories,
+        };
+        response.render("createRecipe.hbs", model);
+      } else {
+        response.redirect("/recipes");
+      }
     });
   } else {
     const model = {
@@ -276,9 +289,14 @@ app.post("/createBlogPost", function (request, response) {
     const values = [title, content, source];
 
     db.run(query, values, function (error) {
-      console.log(error);
-
-      response.redirect("/blogs");
+      if (error) {
+        console.log(error);
+        errors.push("can't load due to internal server error");
+        const model = { errors, title, content, source };
+        response.render("createBlogPost.hbs", model);
+      } else {
+        response.redirect("/blogs");
+      }
     });
   } else {
     const model = {
@@ -298,7 +316,16 @@ app.post("/deleteRecipe/:id", function (request, response) {
     const values = [id];
     console.log(values);
     db.run(query, values, function (error) {
-      response.redirect("/recipes/");
+      if (error) {
+        console.log(error);
+        const model = {
+          id,
+          errors: ["can't load due to internal server error"],
+        };
+        response.render("deleteRecipe.hbs", model);
+      } else {
+        response.redirect("/recipes/");
+      }
     });
   } else {
     const model = {
@@ -347,6 +374,20 @@ app.post("/updateRecipe/:id", function (request, response) {
     db.run(query, values, function (error) {
       if (error) {
         console.log(error);
+        errors.push("can't load due to internal server error");
+        const model = {
+          recipe: {
+            title: newTitle,
+            description: newDescription,
+            ingredients: newIngredients,
+            directions: newDirections,
+            duration: newDuration,
+            calories: newCalories,
+          },
+          errors,
+          id,
+        };
+        response.render("updateRecipe.hbs", model);
       } else {
         response.redirect("/recipes/" + id);
       }
@@ -388,6 +429,18 @@ app.post("/updateComment/:id/:blogPostId", function (request, response) {
     db.run(query, values, function (error) {
       if (error) {
         console.log(error);
+        errors.push("can't load due to internal server error");
+        const model = {
+          comment: {
+            commenterName: newCommenterName,
+            title: newTitle,
+            comment: newComment,
+            blogPostId,
+          },
+          errors,
+        };
+
+        response.render("updateComment.hbs", model);
       } else {
         response.redirect("/blogs/" + blogPostId);
       }
@@ -415,7 +468,17 @@ app.post("/deleteComment/:id/:blogPostId", function (request, response) {
     const values = [id];
     // console.log(values);
     db.run(query, values, function (error) {
-      response.redirect("/blogs/" + blogPostId);
+      if (error) {
+        console.log(error);
+        const model = {
+          id,
+          blogPostId,
+          errors: ["can't load due to internal server error"],
+        };
+        response.render("deleteComment.hbs", model);
+      } else {
+        response.redirect("/blogs/" + blogPostId);
+      }
     });
   } else {
     const model = {
@@ -430,10 +493,19 @@ app.post("/deleteComment/:id/:blogPostId", function (request, response) {
 app.post("/deleteBlogPost/:id", function (request, response) {
   const id = request.params.id;
   if (request.session.isLoggedIn) {
-    const query = "DELETE FROM blogPosts WHERE id=?";
+    const query = "DELETE FROM blogPosts WHERE ghjgjh id=?";
     const values = [id];
     db.run(query, values, function (error) {
-      response.redirect("/blogs");
+      if (error) {
+        console.log(error);
+        const model = {
+          id,
+          errors: ["can't load due to internal server error"],
+        };
+        response.render("deleteBlogPost.hbs", model);
+      } else {
+        response.redirect("/blogs");
+      }
     });
   } else {
     const model = {
@@ -464,6 +536,17 @@ app.post("/updateBlogPost/:id", function (request, response) {
     db.run(query, values, function (error) {
       if (error) {
         console.log(error);
+        errors.push("can't load due to internal server error");
+        const model = {
+          blogPost: {
+            title: newTitle,
+            content: newContent,
+            source: newSource,
+          },
+          errors,
+          id,
+        };
+        response.render("updateBlogPost.hbs", model);
       } else {
         response.redirect("/blogs/" + id);
       }
