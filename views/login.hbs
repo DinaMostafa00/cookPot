@@ -1,3 +1,14 @@
+{{#if errors.length}}
+  <p> Can not log in because:</p>
+
+  <ul>
+    {{#each errors}}
+      {{this}}
+    {{/each}}
+  </ul>
+
+{{/if}}
+
 <h1>Login</h1>
 <form action="" method="post">
   <div>

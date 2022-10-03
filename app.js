@@ -3,6 +3,7 @@ const express = require("express");
 const expressHandlebars = require("express-handlebars");
 const sqlite3 = require("sqlite3");
 const expressSession = require("express-session");
+const SQLiteStore = require("connect-sqlite3")(expressSession);
 
 ///variables
 const minCommenterNameLength = 2;
@@ -31,7 +32,7 @@ db.run(
 
 //////Middleware section
 
-//// watch again 58:59
+//// watch again (3) 58:59
 app.use(
   expressSession({
     secret: "asdfghjkloiuytrezxcvbnm",
@@ -39,6 +40,7 @@ app.use(
     saveUninitialized: false,
     //if the new session be stored in server oor not
     resave: false,
+    store: new SQLiteStore(), // to exsit the session only be logginout not restarting the progaram
   })
 );
 
@@ -143,6 +145,17 @@ function getValidationErrorsForRecipes(
   return validationErrors;
 }
 
+function getErrorsForLogIn(enteredUsername, enteredPassword) {
+  const errors = [];
+  if (
+    enteredUsername != correctUsername ||
+    enteredPassword != correctPassword
+  ) {
+    errors.push("Incorrect User name or Password!");
+  }
+  return errors;
+}
+
 //////////////END OF ERRORS
 
 ////// POST REQUESTSSSSS///////////////////////
@@ -153,14 +166,13 @@ app.post("/blogs/:id", function (request, response) {
   const comment = request.body.comment;
   const blogPostId = request.params.id;
 
-  const validationErrors = getValidationErrorsForComments(
-    commenterName,
-    title,
-    comment
-  );
-  ////we also pass it the update when you get there just pass it new parameters to watch this again tutorial 3 (33:35)
+  const errors = getValidationErrorsForComments(commenterName, title, comment);
 
-  if (validationErrors.length == 0) {
+  if (!request.session.isLoggedIn) {
+    errors.push("You are not logged in!");
+  }
+
+  if (errors.length == 0) {
     const query =
       "INSERT INTO comments (commenterName, title, comment, blogPostId) values (?,?,?,?) ";
     const values = [commenterName, title, comment, blogPostId];
@@ -180,7 +192,7 @@ app.post("/blogs/:id", function (request, response) {
       db.all(querySelectComments, values, function (error, comments) {
         // const model = { blogPost, comments };
         const model = {
-          validationErrors,
+          errors,
           commenterName,
           title,
           comment,
@@ -211,6 +223,10 @@ app.post("/createRecipe", function (request, response) {
     duration,
     calories
   );
+
+  if (!request.session.isLoggedIn) {
+    errors.push("You are not logged in!");
+  }
 
   if (errors.length == 0) {
     const query =
@@ -248,9 +264,12 @@ app.post("/createBlogPost", function (request, response) {
   const content = request.body.content;
   const source = request.body.source;
 
-  //vid 3 - 1:21:40 REMMBER TO WATCH
-
   const errors = getValidationErrorsForBlog(title, content, source);
+
+  if (!request.session.isLoggedIn) {
+    errors.push("You are not logged in!");
+  }
+
   if (errors.length == 0) {
     const query =
       "INSERT INTO blogPosts (title, content, source) values (?,?,?) ";
@@ -274,12 +293,20 @@ app.post("/createBlogPost", function (request, response) {
 
 app.post("/deleteRecipe/:id", function (request, response) {
   const id = request.params.id;
-  const query = "DELETE FROM recipes WHERE id=?";
-  const values = [id];
-  console.log(values);
-  db.run(query, values, function (error) {
-    response.redirect("/recipes/");
-  });
+  if (request.session.isLoggedIn) {
+    const query = "DELETE FROM recipes WHERE id=?";
+    const values = [id];
+    console.log(values);
+    db.run(query, values, function (error) {
+      response.redirect("/recipes/");
+    });
+  } else {
+    const model = {
+      id,
+      errors: ["you are not logged in"],
+    };
+    response.render("deleteRecipe.hbs", model);
+  }
 });
 
 app.post("/updateRecipe/:id", function (request, response) {
@@ -299,6 +326,10 @@ app.post("/updateRecipe/:id", function (request, response) {
     newDuration,
     newCalories
   );
+
+  if (!request.session.isLoggedIn) {
+    errors.push("You are not logged in!");
+  }
 
   if (errors.length == 0) {
     const query =
@@ -337,8 +368,6 @@ app.post("/updateRecipe/:id", function (request, response) {
   }
 });
 
-//////// I HAVE A QUESTION HERE why can't it read the blogPostId ?
-
 app.post("/updateComment/:id/:blogPostId", function (request, response) {
   const id = request.params.id;
   const blogPostId = request.params.blogPostId;
@@ -346,13 +375,13 @@ app.post("/updateComment/:id/:blogPostId", function (request, response) {
   const newTitle = request.body.title;
   const newComment = request.body.comment;
 
-  const validationErrors = getValidationErrorsForComments(
+  const errors = getValidationErrorsForComments(
     newCommenterName,
     newTitle,
     newComment
   );
 
-  if (validationErrors.length == 0) {
+  if (errors.length == 0) {
     const query =
       "UPDATE comments SET commenterName = ?, title = ?, comment = ? WHERE id = ?";
     const values = [newCommenterName, newTitle, newComment, id];
@@ -371,7 +400,7 @@ app.post("/updateComment/:id/:blogPostId", function (request, response) {
         comment: newComment,
         blogPostId,
       },
-      validationErrors,
+      errors,
     };
 
     response.render("updateComment.hbs", model);
@@ -381,22 +410,38 @@ app.post("/updateComment/:id/:blogPostId", function (request, response) {
 app.post("/deleteComment/:id/:blogPostId", function (request, response) {
   const id = request.params.id;
   const blogPostId = request.params.blogPostId;
-  const query = "DELETE FROM comments WHERE id=?";
-  const values = [id];
-  // console.log(values);
-  db.run(query, values, function (error) {
-    response.redirect("/blogs/" + blogPostId);
-  });
+  if (request.session.isLoggedIn) {
+    const query = "DELETE FROM comments WHERE id=?";
+    const values = [id];
+    // console.log(values);
+    db.run(query, values, function (error) {
+      response.redirect("/blogs/" + blogPostId);
+    });
+  } else {
+    const model = {
+      id,
+      blogPostId,
+      errors: ["you are not logged in"],
+    };
+    response.render("deleteComment.hbs", model);
+  }
 });
 
 app.post("/deleteBlogPost/:id", function (request, response) {
   const id = request.params.id;
-  const query = "DELETE FROM blogPosts WHERE id=?";
-  const values = [id];
-  // console.log(values);
-  db.run(query, values, function (error) {
-    response.redirect("/blogs");
-  });
+  if (request.session.isLoggedIn) {
+    const query = "DELETE FROM blogPosts WHERE id=?";
+    const values = [id];
+    db.run(query, values, function (error) {
+      response.redirect("/blogs");
+    });
+  } else {
+    const model = {
+      id,
+      errors: ["you are not logged in"],
+    };
+    response.render("deleteBlogPost.hbs", model);
+  }
 });
 
 app.post("/updateBlogPost/:id", function (request, response) {
@@ -406,6 +451,10 @@ app.post("/updateBlogPost/:id", function (request, response) {
   const newSource = request.body.source;
 
   const errors = getValidationErrorsForBlog(newTitle, newContent, newSource);
+
+  if (!request.session.isLoggedIn) {
+    errors.push("You are not logged in!");
+  }
 
   if (errors.length == 0) {
     const query =
@@ -437,15 +486,18 @@ app.post("/updateBlogPost/:id", function (request, response) {
 app.post("/login", function (request, response) {
   const enteredUsername = request.body.username;
   const enteredPassword = request.body.password;
+  // if (
+  //   enteredUsername == correctUsername &&
+  //   enteredPassword == correctPassword
+  // ) {
+  const errors = getErrorsForLogIn(enteredUsername, enteredPassword);
 
-  if (
-    enteredUsername == correctUsername &&
-    enteredPassword == correctPassword
-  ) {
+  if (errors.length == 0) {
     request.session.isLoggedIn = true;
     response.redirect("/");
   } else {
-    response.redirect("/login"); /// WITH AN ERROR MSG THAT I WILL ADD LATER
+    const model = { errors };
+    response.render("login.hbs", model);
   }
 });
 

@@ -25,11 +25,11 @@
 
 <h1>Leave comment here</h1>
 
-{{#if validationErrors.length}}
+{{#if errors.length}}
   <p> Can not write a comment because:</p>
 
   <ul>
-    {{#each validationErrors}}
+    {{#each errors}}
       {{this}}
     {{/each}}
   </ul>
