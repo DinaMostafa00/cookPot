@@ -1,5 +1,15 @@
  
    <h1>Update Recipe</h1>
+   {{#if errors.length}}
+  <p> Can not write a comment because:</p>
+
+  <ul>
+    {{#each errors}}
+      {{this}}
+    {{/each}}
+  </ul>
+
+{{/if}}
  
  
  <form action="/updateRecipe/{{id}}" method="post">

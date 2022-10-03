@@ -1,5 +1,16 @@
 <h1>Update Comment</h1>
 
+{{#if validationErrors.length}}
+  <p> Can not write a comment because:</p>
+
+  <ul>
+    {{#each validationErrors}}
+      {{this}}
+    {{/each}}
+  </ul>
+
+{{/if}}
+
 <form action="/updateComment/{{id}}/{{comment.blogPostId}}" method="POST">
   <div>
     update Name:

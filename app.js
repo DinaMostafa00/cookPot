@@ -112,7 +112,7 @@ function getValidationErrorsForBlog(title, content, source) {
 }
 
 //POSTS
-function getValidationErrorsForrecipes(
+function getValidationErrorsForRecipes(
   title,
   description,
   ingredients,
@@ -203,7 +203,7 @@ app.post("/createRecipe", function (request, response) {
   const duration = request.body.duration;
   const calories = request.body.calories;
 
-  const errors = getValidationErrorsForrecipes(
+  const errors = getValidationErrorsForRecipes(
     title,
     description,
     ingredients,
@@ -284,44 +284,98 @@ app.post("/deleteRecipe/:id", function (request, response) {
 
 app.post("/updateRecipe/:id", function (request, response) {
   const id = request.params.id;
-  const title = request.body.title;
-  const description = request.body.description;
-  const ingredients = request.body.ingredients;
-  const directions = request.body.directions;
-  const duration = request.body.duration;
-  const calories = request.body.calories;
+  const newTitle = request.body.title;
+  const newDescription = request.body.description;
+  const newIngredients = request.body.ingredients;
+  const newDirections = request.body.directions;
+  const newDuration = request.body.duration;
+  const newCalories = request.body.calories;
 
-  const query =
-    "UPDATE recipes SET title = ?, description = ?, ingredients = ? , directions = ?, duration = ?, calories = ? WHERE id = ?";
-  const values = [
-    title,
-    description,
-    ingredients,
-    directions,
-    duration,
-    calories,
-    id,
-  ];
+  const errors = getValidationErrorsForRecipes(
+    newTitle,
+    newDescription,
+    newIngredients,
+    newDirections,
+    newDuration,
+    newCalories
+  );
 
-  db.run(query, values, function (error) {
-    response.redirect("/recipes/" + id);
-  });
+  if (errors.length == 0) {
+    const query =
+      "UPDATE recipes SET title = ?, description = ?, ingredients = ? , directions = ?, duration = ?, calories = ? WHERE id = ?";
+    const values = [
+      newTitle,
+      newDescription,
+      newIngredients,
+      newDirections,
+      newDuration,
+      newCalories,
+      id,
+    ];
+
+    db.run(query, values, function (error) {
+      if (error) {
+        console.log(error);
+      } else {
+        response.redirect("/recipes/" + id);
+      }
+    });
+  } else {
+    const model = {
+      recipe: {
+        title: newTitle,
+        description: newDescription,
+        ingredients: newIngredients,
+        directions: newDirections,
+        duration: newDuration,
+        calories: newCalories,
+      },
+      errors,
+      id,
+    };
+    response.render("updateRecipe.hbs", model);
+  }
 });
 
-//////// I HAVE A QUESTION HERE
+//////// I HAVE A QUESTION HERE why can't it read the blogPostId ?
+
 app.post("/updateComment/:id/:blogPostId", function (request, response) {
   const id = request.params.id;
   const blogPostId = request.params.blogPostId;
-  const commenterName = request.body.commenterName;
-  const title = request.body.title;
-  const comment = request.body.comment;
-  const query =
-    "UPDATE comments SET commenterName = ?, title = ?, comment = ? WHERE id = ?";
-  const values = [commenterName, title, comment, id];
-  db.run(query, values, function (error) {
-    console.log(error);
-    response.redirect("/blogs/" + blogPostId);
-  });
+  const newCommenterName = request.body.commenterName;
+  const newTitle = request.body.title;
+  const newComment = request.body.comment;
+
+  const validationErrors = getValidationErrorsForComments(
+    newCommenterName,
+    newTitle,
+    newComment
+  );
+
+  if (validationErrors.length == 0) {
+    const query =
+      "UPDATE comments SET commenterName = ?, title = ?, comment = ? WHERE id = ?";
+    const values = [newCommenterName, newTitle, newComment, id];
+    db.run(query, values, function (error) {
+      if (error) {
+        console.log(error);
+      } else {
+        response.redirect("/blogs/" + blogPostId);
+      }
+    });
+  } else {
+    const model = {
+      comment: {
+        commenterName: newCommenterName,
+        title: newTitle,
+        comment: newComment,
+        blogPostId,
+      },
+      validationErrors,
+    };
+
+    response.render("updateComment.hbs", model);
+  }
 });
 
 app.post("/deleteComment/:id/:blogPostId", function (request, response) {
@@ -347,17 +401,36 @@ app.post("/deleteBlogPost/:id", function (request, response) {
 
 app.post("/updateBlogPost/:id", function (request, response) {
   const id = request.params.id;
-  const title = request.body.title;
-  const content = request.body.content;
-  const source = request.body.source;
+  const newTitle = request.body.title;
+  const newContent = request.body.content;
+  const newSource = request.body.source;
 
-  const query =
-    "UPDATE blogPosts SET title = ?, content = ?, source = ?  WHERE id = ?";
-  const values = [title, content, source, id];
+  const errors = getValidationErrorsForBlog(newTitle, newContent, newSource);
 
-  db.run(query, values, function (error) {
-    response.redirect("/blogs/" + id);
-  });
+  if (errors.length == 0) {
+    const query =
+      "UPDATE blogPosts SET title = ?, content = ?, source = ?  WHERE id = ?";
+    const values = [newTitle, newContent, newSource, id];
+
+    db.run(query, values, function (error) {
+      if (error) {
+        console.log(error);
+      } else {
+        response.redirect("/blogs/" + id);
+      }
+    });
+  } else {
+    const model = {
+      blogPost: {
+        title: newTitle,
+        content: newContent,
+        source: newSource,
+      },
+      errors,
+      id, //it's important to add the id in the model
+    };
+    response.render("updateBlogPost.hbs", model);
+  }
 });
 
 /// POSSTTT  for login
