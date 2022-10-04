@@ -1,9 +1,73 @@
-<h1> Hi, <h1>
+{{!-- <h1> Hi, <h1>
 
-<h1> I Hope you are hungry!</h1>
+<h1> I Hope you are hungry!</h1> --}}
+
+
+
+
+<div class="startPage"> 
+
+<div class="hero bg-gray  hero-lg" >
+  <div class="hero-body">
+   <h1 class="heroText"> Hi, <h1>
+    <p class="heroText">I Hope you are hungry!</p>
+  </div>
+</div>
+</div>
+
+
+{{!-- /////////
 
 <p>bla bla bla about me bla bla
   <div><a href="aboutMe">Read more about me</a></div>
 </p>
 
 <a href="/recipes ">check out my recipes </a>
+
+</div>
+
+
+
+////////// --}}
+
+
+
+
+
+
+
+
+<div class="columns col-gapless">
+  <div class="column col-6">
+
+      {{!-- cards stars here --}}
+      <div class="card">
+        <div class="card-image">
+          <img src="public/owner.jpg" class="img-responsive">
+        </div>
+        <div class="card-header">
+          <div class="card-title h5"> hungry ?</div>
+          <div class="card-subtitle text-gray"><a href="/recipes ">check out my recipes </a></div>
+        </div>
+        
+      </div>
+      {{!-- cards ends here --}}
+ 
+  </div>
+  <div class="column col-6">
+
+      {{!-- cards stars here --}}
+      <div class="card">
+        <div class="card-image">
+          <img src="public/owner.jpg" class="img-responsive">
+        </div>
+        <div class="card-header">
+          <div class="card-title h5"> Who I'm ?</div>
+          <div class="card-subtitle text-gray"><a href="aboutMe">Read more about me here</a></div>
+        </div>
+        
+      </div>
+      {{!-- cards ends here --}}
+  
+  </div>
+</div>
