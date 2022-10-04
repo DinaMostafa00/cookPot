@@ -1,8 +1,9 @@
 <h1>Recipes</h1>
 
-{{#if recipes.length}}
+{{!-- {{#if recipes.length}}
   <ul>
     {{#each recipes}}
+
       <li>
         <a href="/recipes/{{id}}">
           {{title}}</a>
@@ -15,9 +16,29 @@
 
   <p> wait for upcoming recipes</p>
 
-{{/if}}
+{{/if}} --}}
 
-{{! <div><a href="photography">Photography</a></div>
-<div><a href="Paintings">Painting</a></div>
-<div><a href="graphicDesigns">Graphic Designs</a></div>
-<div><a href="sculptureDesigns"> Sculpture Designs</a></div> }}
+{{#if recipes.length}}
+
+  {{#each recipes}}
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title h5">
+          <a href="/recipes/{{id}}">
+            {{title}}</a>
+
+        </div>
+        <div class="card-subtitle text-gray">
+          <p>{{description}}</p>
+
+        </div>
+      </div>
+    </div>
+  {{/each}}
+
+{{else}}
+
+  <p> wait for upcoming recipes</p>
+
+{{/if}}

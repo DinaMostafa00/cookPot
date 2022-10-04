@@ -1,6 +1,6 @@
 <h1>Blogs</h1>
 
-{{#if blogPosts.length}}
+{{!-- {{#if blogPosts.length}}
   <ul>
     {{#each blogPosts}}
       <li>
@@ -14,5 +14,26 @@
 {{else}}
 
   <p> wait for upcoming projects</p>
+
+{{/if}} --}}
+
+{{#if blogPosts.length}}
+
+  {{#each blogPosts}}
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title h5">
+          <a href="/blogs/{{id}}">
+            {{title}}</a>
+        </div>
+
+      </div>
+    </div>
+  {{/each}}
+
+{{else}}
+
+  <p> wait for upcoming recipes</p>
 
 {{/if}}

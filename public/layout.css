@@ -1,0 +1,28 @@
+.headerAdjusting {
+  padding: 1%;
+}
+
+.startPage .heroText {
+  color: yellow;
+  font-size: 3rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* //Question here */
+/* 
+.startPage .adjustingImg {
+  width: 400px;
+  height: 500px;
+  object-fit: contain;
+} */
+
+.loginAdjusment {
+  margin-left: 1%;
+  margin-right: 25%;
+}
+
+.contactmeAdjustment {
+  margin-left: 1%;
+  margin-right: 25%;
+}
