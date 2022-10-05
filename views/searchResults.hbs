@@ -1,9 +1,9 @@
 <p> here what we found:</p>
 
-{{#if recipes}}
+{{#if recipes.length}}
 
   {{#each recipes}}
-    {{this}}
+    <a href="/recipes/{{id}}"> {{title}} </a>
   {{/each}}
 
 {{else}}

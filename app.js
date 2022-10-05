@@ -24,7 +24,7 @@ const db = new sqlite3.Database("recipesDatabase.db");
 db.run("PRAGMA foreign_keys = ON");
 
 db.run(
-  "CREATE TABLE IF NOT EXISTS recipes (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, ingredients TEXT, directions TEXT, duration TEXT, calories TEXT)"
+  "CREATE TABLE IF NOT EXISTS recipes (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, ingredients TEXT, directions TEXT, duration TEXT, calories TEXT, caloriesCategory TEXT, durationCategory TEXT )"
 );
 
 db.run(
@@ -230,6 +230,8 @@ app.post("/createRecipe", function (request, response) {
   const directions = request.body.directions;
   const duration = request.body.duration;
   const calories = request.body.calories;
+  const caloriesCategory = request.body.caloriesCategory;
+  const durationCategory = request.body.durationCategory;
 
   const errors = getValidationErrorsForRecipes(
     title,
@@ -246,7 +248,7 @@ app.post("/createRecipe", function (request, response) {
 
   if (errors.length == 0) {
     const query =
-      "INSERT INTO recipes (title, description, ingredients, directions, duration, calories) values (?,?,?,?,?,?) ";
+      "INSERT INTO recipes (title, description, ingredients, directions, duration, calories, caloriesCategory, durationCategory) values (?,?,?,?,?,?,?,?) ";
     const values = [
       title,
       description,
@@ -254,6 +256,8 @@ app.post("/createRecipe", function (request, response) {
       directions,
       duration,
       calories,
+      caloriesCategory,
+      durationCategory,
     ];
 
     db.run(query, values, function (error) {
@@ -283,6 +287,8 @@ app.post("/createRecipe", function (request, response) {
       directions,
       duration,
       calories,
+      durationCategory,
+      durationCategory,
     };
     response.render("createRecipe.hbs", model);
   }
@@ -811,22 +817,36 @@ app.get("/updateBlogPost/:id", function (request, response) {
 });
 
 app.get("/search", function (request, response) {
-  const search = request.params.search;
+  const search = request.query.search;
 
-  if ((search = 0)) {
-    response.render("search.hbs");
-  } else {
-    // const searchField = request.query.search;
-    const query = "SELECT * FROM recipes WHERE title LIKE ?";
+  if (search) {
+    const query = "SELECT * FROM recipes WHERE title LIKE ? ";
     const values = [search + "%"];
     db.all(query, values, function (error, recipes) {
       if (error) {
       } else {
         const model = { recipes };
-        response.render("searchResult.hbs", model);
+        response.render("searchResults.hbs", model);
       }
     });
+  } else {
+    response.render("search.hbs");
   }
 });
 
 app.listen(8080);
+
+// if (search ) {
+//   response.render("search.hbs");
+// } else {
+//   // const searchField = request.query.search;
+//   const query = "SELECT * FROM recipes WHERE title LIKE ?";
+//   const values = [search + "%"];
+//   db.all(query, values, function (error, recipes) {
+//     if (error) {
+//     } else {
+//       const model = { recipes };
+//       response.render("searchResult.hbs", model);
+//     }
+//   });
+// }

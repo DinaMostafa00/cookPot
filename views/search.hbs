@@ -12,6 +12,14 @@
         value="{{search}}"
       />
 
+      <div class="form-group">
+        <select class="form-select" name="duration">
+          <option>Choose duration </option>
+          <option>Something quick</option>
+          <option>I have time</option>
+        </select>
+      </div>
+
       <input type="submit" value="search" />
 
     </div>
@@ -19,16 +27,16 @@
 
   <p> nothing in mind?</p>
 
-  <div class="form-group">
-    <select class="form-select">
+  {{! <div class="form-group">
+    <select class="form-select" name="duration">
       <option>Choose duration </option>
       <option>Something quick</option>
       <option>I have time</option>
     </select>
-  </div>
+  </div> }}
 
   <div class="form-group">
-    <select class="form-select">
+    <select class="form-select" name="calories">
       <option>Choose calories </option>
       <option>Low in calories</option>
       <option>High in calories </option>
