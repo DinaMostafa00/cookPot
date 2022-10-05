@@ -4,6 +4,11 @@ const expressHandlebars = require("express-handlebars");
 const sqlite3 = require("sqlite3");
 const expressSession = require("express-session");
 const SQLiteStore = require("connect-sqlite3")(expressSession);
+const like = require("like");
+// const filter = like(searchField.value);
+// const matches = items.filter(function (x) {
+//   return filter.test(x);
+// });
 
 ///variables
 const minCommenterNameLength = 2;
@@ -803,6 +808,25 @@ app.get("/updateBlogPost/:id", function (request, response) {
       response.render("updateBlogPost.hbs", model);
     }
   });
+});
+
+app.get("/search", function (request, response) {
+  const search = request.params.search;
+
+  if ((search = 0)) {
+    response.render("search.hbs");
+  } else {
+    // const searchField = request.query.search;
+    const query = "SELECT * FROM recipes WHERE title LIKE ?";
+    const values = [search + "%"];
+    db.all(query, values, function (error, recipes) {
+      if (error) {
+      } else {
+        const model = { recipes };
+        response.render("searchResult.hbs", model);
+      }
+    });
+  }
 });
 
 app.listen(8080);
