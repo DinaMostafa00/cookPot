@@ -10,6 +10,7 @@
   <p>{{recipe.calories}}</p>
   <p>{{recipe.caloriesCategory}}</p>
   <p>{{recipe.durationCategory}}</p>
+  <img src="/uploaded/{{recipe.imageURL}}" />
 
   {{#if isLoggedIn}}
     <a href="/deleteRecipe/{{recipe.id}}">Delete recipe</a>

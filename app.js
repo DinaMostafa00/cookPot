@@ -19,7 +19,7 @@ const multer = require("multer");
 
 const storage = multer.diskStorage({
   destination(request, file, cb) {
-    cb(null, "../puplic/uploaded");
+    cb(null, "public/uploaded");
   },
   filename(request, file, cb) {
     console.log(file);
@@ -99,6 +99,14 @@ app.use(function (request, response, next) {
 });
 
 /////ERRORS SECTION///////////
+function getErrorsForSearch(search, calories, duration) {
+  const errors = [];
+
+  if (calories.length == 0 && duration.length == 0 && search.length == 0) {
+    errors.push("fields cant be empty!");
+  }
+  return errors;
+}
 
 //COMMENTS
 function getValidationErrorsForComments(commenterName, title, comment) {
@@ -252,6 +260,7 @@ app.post("/createRecipe", function (request, response) {
   const calories = request.body.calories;
   const caloriesCategory = request.body.caloriesCategory;
   const durationCategory = request.body.durationCategory;
+  const imageURL = request.body.image;
 
   const errors = getValidationErrorsForRecipes(
     title,
@@ -268,7 +277,7 @@ app.post("/createRecipe", function (request, response) {
 
   if (errors.length == 0) {
     const query =
-      "INSERT INTO recipes (title, description, ingredients, directions, duration, calories, caloriesCategory, durationCategory) values (?,?,?,?,?,?,?,?) ";
+      "INSERT INTO recipes (title, description, ingredients, directions, duration, calories, caloriesCategory, durationCategory, imageURL) values (?,?,?,?,?,?,?,?,?) ";
     const values = [
       title,
       description,
@@ -278,6 +287,7 @@ app.post("/createRecipe", function (request, response) {
       calories,
       caloriesCategory,
       durationCategory,
+      imageURL,
     ];
 
     db.run(query, values, function (error) {
@@ -309,6 +319,7 @@ app.post("/createRecipe", function (request, response) {
       calories,
       durationCategory,
       durationCategory,
+      imageURL,
     };
     response.render("createRecipe.hbs", model);
   }
@@ -888,6 +899,8 @@ app.get("/search", function (request, response) {
       }
     });
   } else {
+    // const errors = getErrorsForSearch(search, calories, duration);
+    // const model = { errors };
     response.render("search.hbs");
   }
 });
@@ -897,7 +910,7 @@ app.get("/uploadImg", function (request, response) {
 });
 
 app.post("/uploadImg", upload.single("image"), function (request, response) {
-  response.render("imgUploaded.hbs");
+  response.render("createRecipe.hbs");
 });
 
 app.listen(8080);

@@ -1,3 +1,11 @@
+{{#if errors}}
+
+  {{#each errors}}
+    {{this}}
+  {{/each}}
+
+{{/if}}
+
 {{! //Q ACTION ? }}
 <form action="/search" method="get">
   <p> looking for something spcific ?</p>
