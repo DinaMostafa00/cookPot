@@ -906,7 +906,7 @@ app.get("/search", function (request, response) {
 });
 
 app.get("/uploadImg", function (request, response) {
-  response.render("uploadImg.hbs");
+  response.render("createRecipe.hbs");
 });
 
 app.post("/uploadImg", upload.single("image"), function (request, response) {
