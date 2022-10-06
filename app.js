@@ -10,6 +10,26 @@ const like = require("like");
 //   return filter.test(x);
 // });
 
+const multer = require("multer");
+
+// here we determind where we gonna store the imgs and their name
+//null refer to the errors we dont care here so much
+
+//I understod that sytex here in cb is standrad but why only req not require ?///Q
+
+const storage = multer.diskStorage({
+  destination(request, file, cb) {
+    cb(null, "../puplic/uploaded");
+  },
+  filename(request, file, cb) {
+    console.log(file);
+    cb(null, file.originalname);
+  },
+});
+
+//This is object that have every thing related to the storage
+const upload = multer({ storage });
+
 ///variables
 const minCommenterNameLength = 2;
 const minTitleLength = 2;
@@ -818,10 +838,48 @@ app.get("/updateBlogPost/:id", function (request, response) {
 
 app.get("/search", function (request, response) {
   const search = request.query.search;
+  const duration = request.query.duration;
+  const calories = request.query.calories;
 
-  if (search) {
-    const query = "SELECT * FROM recipes WHERE title LIKE ? ";
-    const values = [search + "%"];
+  if ((duration, calories, search)) {
+    const query =
+      "SELECT * FROM recipes WHERE durationCategory LIKE ? AND caloriesCategory LIKE ? AND title LIKE ? ";
+
+    const values = [
+      "%" + duration + "%",
+      "%" + calories + "%",
+      "%" + search + "%",
+    ];
+    db.all(query, values, function (error, recipes) {
+      if (error) {
+      } else {
+        const model = { recipes };
+        response.render("searchResults.hbs", model);
+      }
+    });
+  } else if (search) {
+    const query = "SELECT * FROM recipes WHERE title LIKE ?";
+    const values = ["%" + search + "%"];
+    db.all(query, values, function (error, recipes) {
+      if (error) {
+      } else {
+        const model = { recipes };
+        response.render("searchResults.hbs", model);
+      }
+    });
+  } else if (duration) {
+    const query = "SELECT * FROM recipes WHERE durationCategory LIKE ?";
+    const values = ["%" + duration + "%"];
+    db.all(query, values, function (error, recipes) {
+      if (error) {
+      } else {
+        const model = { recipes };
+        response.render("searchResults.hbs", model);
+      }
+    });
+  } else if (calories) {
+    const query = "SELECT * FROM recipes WHERE caloriesCategory LIKE ?";
+    const values = ["%" + calories + "%"];
     db.all(query, values, function (error, recipes) {
       if (error) {
       } else {
@@ -832,6 +890,14 @@ app.get("/search", function (request, response) {
   } else {
     response.render("search.hbs");
   }
+});
+
+app.get("/uploadImg", function (request, response) {
+  response.render("uploadImg.hbs");
+});
+
+app.post("/uploadImg", upload.single("image"), function (request, response) {
+  response.render("imgUploaded.hbs");
 });
 
 app.listen(8080);
