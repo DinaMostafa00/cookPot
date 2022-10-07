@@ -389,78 +389,97 @@ app.post("/deleteRecipe/:id", function (request, response) {
   }
 });
 
-app.post("/updateRecipe/:id", function (request, response) {
-  const id = request.params.id;
-  const newTitle = request.body.title;
-  const newDescription = request.body.description;
-  const newIngredients = request.body.ingredients;
-  const newDirections = request.body.directions;
-  const newDuration = request.body.duration;
-  const newCalories = request.body.calories;
+app.post(
+  "/updateRecipe/:id",
+  upload.single("image"),
+  function (request, response) {
+    const id = request.params.id;
+    const newTitle = request.body.title;
+    const newDescription = request.body.description;
+    const newIngredients = request.body.ingredients;
+    const newDirections = request.body.directions;
+    const newDuration = request.body.duration;
+    const newCalories = request.body.calories;
+    const newCaloriesCategory = request.body.caloriesCategory;
+    const newDurationCategory = request.body.durationCategory;
+    const newImageURL = request.file.filename;
 
-  const errors = getValidationErrorsForRecipes(
-    newTitle,
-    newDescription,
-    newIngredients,
-    newDirections,
-    newDuration,
-    newCalories
-  );
-
-  if (!request.session.isLoggedIn) {
-    errors.push("You are not logged in!");
-  }
-
-  if (errors.length == 0) {
-    const query =
-      "UPDATE recipes SET title = ?, description = ?, ingredients = ? , directions = ?, duration = ?, calories = ? WHERE id = ?";
-    const values = [
+    const errors = getValidationErrorsForRecipes(
       newTitle,
       newDescription,
       newIngredients,
       newDirections,
       newDuration,
       newCalories,
-      id,
-    ];
+      newCaloriesCategory,
+      newDurationCategory,
+      newImageURL
+    );
 
-    db.run(query, values, function (error) {
-      if (error) {
-        console.log(error);
-        errors.push("can't load due to internal server error");
-        const model = {
-          recipe: {
-            title: newTitle,
-            description: newDescription,
-            ingredients: newIngredients,
-            directions: newDirections,
-            duration: newDuration,
-            calories: newCalories,
-          },
-          errors,
-          id,
-        };
-        response.render("updateRecipe.hbs", model);
-      } else {
-        response.redirect("/recipes/" + id);
-      }
-    });
-  } else {
-    const model = {
-      recipe: {
-        title: newTitle,
-        description: newDescription,
-        ingredients: newIngredients,
-        directions: newDirections,
-        duration: newDuration,
-        calories: newCalories,
-      },
-      errors,
-      id,
-    };
-    response.render("updateRecipe.hbs", model);
+    if (!request.session.isLoggedIn) {
+      errors.push("You are not logged in!");
+    }
+
+    if (errors.length == 0) {
+      const query =
+        "UPDATE recipes SET title = ?, description = ?, ingredients = ? , directions = ?, duration = ?, calories = ?, caloriesCategory = ?, durationCategory = ?, imageURL =?  WHERE id = ?";
+      const values = [
+        newTitle,
+        newDescription,
+        newIngredients,
+        newDirections,
+        newDuration,
+        newCalories,
+        newCaloriesCategory,
+        newDurationCategory,
+        newImageURL,
+        id,
+      ];
+
+      db.run(query, values, function (error) {
+        if (error) {
+          console.log(error);
+          errors.push("can't load due to internal server error");
+          const model = {
+            recipe: {
+              title: newTitle,
+              description: newDescription,
+              ingredients: newIngredients,
+              directions: newDirections,
+              duration: newDuration,
+              calories: newCalories,
+              caloriesCategory: newCaloriesCategory,
+              durationCategory: newDurationCategory,
+              imageURL: newImageURL,
+            },
+            errors,
+            id,
+          };
+          response.render("updateRecipe.hbs", model);
+        } else {
+          response.redirect("/recipes/" + id);
+        }
+      });
+    } else {
+      const model = {
+        recipe: {
+          title: newTitle,
+          description: newDescription,
+          ingredients: newIngredients,
+          directions: newDirections,
+          duration: newDuration,
+          calories: newCalories,
+          caloriesCategory: newCaloriesCategory,
+          durationCategory: newDurationCategory,
+          imageURL: newImageURL,
+        },
+        errors,
+        id,
+      };
+      response.render("updateRecipe.hbs", model);
+    }
   }
-});
+);
 
 app.post("/updateComment/:id/:blogPostId", function (request, response) {
   const id = request.params.id;
