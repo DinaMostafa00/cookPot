@@ -260,7 +260,11 @@ app.post("/createRecipe", upload.single("image"), function (request, response) {
   const calories = request.body.calories;
   const caloriesCategory = request.body.caloriesCategory;
   const durationCategory = request.body.durationCategory;
-  const imageURL = request.file.filename;
+  // const imageURL = request.file.filename;
+  // if (request.file) {
+  //   const imageURL = request.file.filename;
+
+  // }
 
   const errors = getValidationErrorsForRecipes(
     title,
@@ -271,11 +275,16 @@ app.post("/createRecipe", upload.single("image"), function (request, response) {
     calories
   );
 
+  if (!request.file) {
+    errors.push("Please upload picture first!");
+  }
+
   if (!request.session.isLoggedIn) {
     errors.push("You are not logged in!");
   }
 
   if (errors.length == 0) {
+    const imageURL = request.file.filename;
     const query =
       "INSERT INTO recipes (title, description, ingredients, directions, duration, calories, caloriesCategory, durationCategory, imageURL) values (?,?,?,?,?,?,?,?,?) ";
     const values = [
@@ -319,7 +328,6 @@ app.post("/createRecipe", upload.single("image"), function (request, response) {
       calories,
       durationCategory,
       durationCategory,
-      imageURL,
     };
     response.render("createRecipe.hbs", model);
   }
@@ -871,7 +879,7 @@ app.get("/search", function (request, response) {
   const duration = request.query.duration;
   const calories = request.query.calories;
 
-  if ((duration, calories, search)) {
+  if (duration && calories && search) {
     const query =
       "SELECT * FROM recipes WHERE durationCategory LIKE ? AND caloriesCategory LIKE ? AND title LIKE ? ";
 
