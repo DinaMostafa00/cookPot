@@ -19,7 +19,7 @@ const multer = require("multer");
 
 const storage = multer.diskStorage({
   destination(request, file, cb) {
-    cb(null, "public/uploaded");
+    cb(null, "public/imgUploaded");
   },
   filename(request, file, cb) {
     console.log(file);
@@ -28,7 +28,7 @@ const storage = multer.diskStorage({
 });
 
 //This is object that have every thing related to the storage
-const upload = multer({ storage });
+const upload = multer({ storage: storage });
 
 ///variables
 const minCommenterNameLength = 2;
@@ -251,7 +251,7 @@ app.post("/blogs/:id", function (request, response) {
 });
 
 /////POST FOR CREATE
-app.post("/createRecipe", function (request, response) {
+app.post("/createRecipe", upload.single("image"), function (request, response) {
   const title = request.body.title;
   const description = request.body.description;
   const ingredients = request.body.ingredients;
@@ -260,7 +260,7 @@ app.post("/createRecipe", function (request, response) {
   const calories = request.body.calories;
   const caloriesCategory = request.body.caloriesCategory;
   const durationCategory = request.body.durationCategory;
-  const imageURL = request.body.image;
+  const imageURL = request.file.filename;
 
   const errors = getValidationErrorsForRecipes(
     title,
@@ -377,7 +377,7 @@ app.post("/deleteRecipe/:id", function (request, response) {
         };
         response.render("deleteRecipe.hbs", model);
       } else {
-        response.redirect("/recipes/");
+        response.redirect("/recipes");
       }
     });
   } else {
@@ -863,6 +863,12 @@ app.get("/search", function (request, response) {
     ];
     db.all(query, values, function (error, recipes) {
       if (error) {
+        console.log(error);
+        const model = {
+          recipes,
+          errors: ["can't load due to internal server error"],
+        };
+        response.render("searchResults.hbs", model);
       } else {
         const model = { recipes };
         response.render("searchResults.hbs", model);
@@ -873,6 +879,12 @@ app.get("/search", function (request, response) {
     const values = ["%" + search + "%"];
     db.all(query, values, function (error, recipes) {
       if (error) {
+        console.log(error);
+        const model = {
+          recipes,
+          errors: ["can't load due to internal server error"],
+        };
+        response.render("searchResults.hbs", model);
       } else {
         const model = { recipes };
         response.render("searchResults.hbs", model);
@@ -883,6 +895,12 @@ app.get("/search", function (request, response) {
     const values = ["%" + duration + "%"];
     db.all(query, values, function (error, recipes) {
       if (error) {
+        console.log(error);
+        const model = {
+          recipes,
+          errors: ["can't load due to internal server error"],
+        };
+        response.render("searchResults.hbs", model);
       } else {
         const model = { recipes };
         response.render("searchResults.hbs", model);
@@ -893,6 +911,12 @@ app.get("/search", function (request, response) {
     const values = ["%" + calories + "%"];
     db.all(query, values, function (error, recipes) {
       if (error) {
+        console.log(error);
+        const model = {
+          recipes,
+          errors: ["can't load due to internal server error"],
+        };
+        response.render("searchResults.hbs", model);
       } else {
         const model = { recipes };
         response.render("searchResults.hbs", model);
@@ -905,9 +929,9 @@ app.get("/search", function (request, response) {
   }
 });
 
-app.get("/uploadImg", function (request, response) {
-  response.render("createRecipe.hbs");
-});
+// app.get("/uploadImg", function (request, response) {
+//   response.render("createRecipe.hbs");
+// });
 
 app.post("/uploadImg", upload.single("image"), function (request, response) {
   response.render("createRecipe.hbs");
