@@ -101,8 +101,7 @@ app.use(function (request, response, next) {
 /////ERRORS SECTION///////////
 function getErrorsForSearch(search, calories, duration) {
   const errors = [];
-
-  if (calories.length == 0 && duration.length == 0 && search.length == 0) {
+  if (calories == "" && duration == "" && search == "") {
     errors.push("fields cant be empty!");
   }
   return errors;
@@ -950,9 +949,9 @@ app.get("/search", function (request, response) {
       }
     });
   } else {
-    // const errors = getErrorsForSearch(search, calories, duration);
-    // const model = { errors };
-    response.render("search.hbs");
+    const errors = getErrorsForSearch(search, calories, duration);
+    const model = { errors };
+    response.render("search.hbs", model);
   }
 });
 
