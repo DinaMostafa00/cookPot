@@ -42,20 +42,40 @@
     <input type="text" name="calories" value="{{calories}}" />
   </div>
 
+<h2>Choose duration Category</h2>
 
- <select name="durationCategory" value="{{durationCategory}}">
-      <option>Choose duration </option>
+<select name="durationCategory">
+      <option> </option>
+      <option {{#if isSomethingQuickSelected}}selected{{/if}}>Something quick</option>
+      <option {{#if isIHaveTimeSelected}}selected{{/if}}>I have time</option>
+    </select>
+  </div>
+
+ <select name="caloriesCategory">
+      <option> </option>
+      <option {{#if isLowInCaloriesSelected}}selected{{/if}}>Low in calories</option>
+      <option {{#if isHighInCaloriesHighSelected}}selected{{/if}}>High in calories </option>
+    </select>
+  </div>
+
+
+
+
+
+
+ {{!-- <select name="durationCategory">
+      <option> </option>
       <option>Something quick</option>
       <option>I have time</option>
     </select>
   </div>
-
+<h2>Choose calories Category</h2>
  <select name="caloriesCategory" value="{{caloriesCategory}}">
-      <option>Choose duration </option>
+      <option> </option>
       <option>Low in calories</option>
       <option>High in calories </option>
     </select>
-  </div>
+  </div> --}}
 
 
 

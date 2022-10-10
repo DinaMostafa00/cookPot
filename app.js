@@ -5,7 +5,7 @@ const sqlite3 = require("sqlite3");
 const expressSession = require("express-session");
 const SQLiteStore = require("connect-sqlite3")(expressSession);
 const like = require("like");
-const recipeRouter = require("./routers/recipeRouter");
+// const recipeRouter = require("./routers/recipeRouter");
 
 const multer = require("multer");
 
@@ -36,12 +36,12 @@ const correctPassword = "123";
 const app = express();
 
 ///database and SQLITE
-const db = new sqlite3.Database("recipesDatabase.db");
+const db = new sqlite3.Database("mainDatabase.db");
 
 db.run("PRAGMA foreign_keys = ON");
 
 db.run(
-  "CREATE TABLE IF NOT EXISTS recipes (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, ingredients TEXT, directions TEXT, duration TEXT, calories TEXT, caloriesCategory TEXT, durationCategory TEXT )"
+  "CREATE TABLE IF NOT EXISTS recipes (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, ingredients TEXT, directions TEXT, duration TEXT, calories INTEGER, caloriesCategory TEXT, durationCategory TEXT, imageURL TEXT )"
 );
 
 db.run(
@@ -95,7 +95,7 @@ app.use(function (request, response, next) {
   //next to invoke the next middleware
 });
 
-app.use("/recipes", recipeRouter);
+// app.use("/recipes", recipeRouter);
 
 /////ERRORS SECTION///////////
 function getErrorsForSearch(search, calories, duration) {
@@ -151,7 +151,9 @@ function getValidationErrorsForRecipes(
   ingredients,
   directions,
   duration,
-  calories
+  calories,
+  caloriesCategory,
+  durationCategory
 ) {
   const validationErrors = [];
 
@@ -172,6 +174,12 @@ function getValidationErrorsForRecipes(
   }
   if (calories.length == 0) {
     validationErrors.push("calories field can't be empty");
+  }
+  if (caloriesCategory == "") {
+    validationErrors.push("calories Category field can't be empty");
+  }
+  if (durationCategory == "") {
+    validationErrors.push("duration Category field can't be empty");
   }
   return validationErrors;
 }
@@ -258,11 +266,6 @@ app.post("/createRecipe", upload.single("image"), function (request, response) {
   const calories = request.body.calories;
   const caloriesCategory = request.body.caloriesCategory;
   const durationCategory = request.body.durationCategory;
-  // const imageURL = request.file.filename;
-  // if (request.file) {
-  //   const imageURL = request.file.filename;
-
-  // }
 
   const errors = getValidationErrorsForRecipes(
     title,
@@ -270,7 +273,9 @@ app.post("/createRecipe", upload.single("image"), function (request, response) {
     ingredients,
     directions,
     duration,
-    calories
+    calories,
+    caloriesCategory,
+    durationCategory
   );
 
   if (!request.file) {
@@ -309,6 +314,8 @@ app.post("/createRecipe", upload.single("image"), function (request, response) {
           directions,
           duration,
           calories,
+          caloriesCategory,
+          durationCategory,
         };
         response.render("createRecipe.hbs", model);
       } else {
@@ -324,12 +331,113 @@ app.post("/createRecipe", upload.single("image"), function (request, response) {
       directions,
       duration,
       calories,
+      caloriesCategory,
       durationCategory,
-      durationCategory,
+      isSomethingQuickSelected: durationCategory == "Something quick",
+      isIHaveTimeSelected: durationCategory == "I have time",
+      isLowInCaloriesSelected: caloriesCategory == "Low in calories",
+      isHighInCaloriesHighSelected: caloriesCategory == "High in calories",
     };
     response.render("createRecipe.hbs", model);
   }
 });
+
+app.post(
+  "/updateRecipe/:id",
+  upload.single("image"),
+  function (request, response) {
+    const id = request.params.id;
+    const newTitle = request.body.title;
+    const newDescription = request.body.description;
+    const newIngredients = request.body.ingredients;
+    const newDirections = request.body.directions;
+    const newDuration = request.body.duration;
+    const newCalories = request.body.calories;
+    const newCaloriesCategory = request.body.caloriesCategory;
+    const newDurationCategory = request.body.durationCategory;
+
+    const errors = getValidationErrorsForRecipes(
+      newTitle,
+      newDescription,
+      newIngredients,
+      newDirections,
+      newDuration,
+      newCalories,
+      newCaloriesCategory,
+      newDurationCategory
+    );
+
+    if (!request.file) {
+      errors.push("Please upload picture first!");
+    }
+
+    if (!request.session.isLoggedIn) {
+      errors.push("You are not logged in!");
+    }
+
+    if (errors.length == 0) {
+      const newImageURL = request.file.filename;
+      const query =
+        "UPDATE recipes SET title = ?, description = ?, ingredients = ? , directions = ?, duration = ?, calories = ?, caloriesCategory = ?, durationCategory = ?, imageURL =?  WHERE id = ?";
+      const values = [
+        newTitle,
+        newDescription,
+        newIngredients,
+        newDirections,
+        newDuration,
+        newCalories,
+        newCaloriesCategory,
+        newDurationCategory,
+        newImageURL,
+        id,
+      ];
+
+      db.run(query, values, function (error) {
+        if (error) {
+          console.log(error);
+          errors.push("can't load due to internal server error");
+          const model = {
+            recipe: {
+              title: newTitle,
+              description: newDescription,
+              ingredients: newIngredients,
+              directions: newDirections,
+              duration: newDuration,
+              calories: newCalories,
+              caloriesCategory: newCaloriesCategory,
+              durationCategory: newDurationCategory,
+            },
+            errors,
+            id,
+          };
+          response.render("updateRecipe.hbs", model);
+        } else {
+          response.redirect("/recipes/" + id);
+        }
+      });
+    } else {
+      const model = {
+        recipe: {
+          title: newTitle,
+          description: newDescription,
+          ingredients: newIngredients,
+          directions: newDirections,
+          duration: newDuration,
+          calories: newCalories,
+          caloriesCategory: newCaloriesCategory,
+          durationCategory: newDurationCategory,
+        },
+        isSomethingQuickSelected: newDurationCategory == "Something quick",
+        isIHaveTimeSelected: newDurationCategory == "I have time",
+        isLowInCaloriesSelected: newCaloriesCategory == "Low in calories",
+        isHighInCaloriesHighSelected: newCaloriesCategory == "High in calories",
+        errors,
+        id,
+      };
+      response.render("updateRecipe.hbs", model);
+    }
+  }
+);
 
 app.post("/createBlogPost", function (request, response) {
   const title = request.body.title;
@@ -394,98 +502,6 @@ app.post("/deleteRecipe/:id", function (request, response) {
     response.render("deleteRecipe.hbs", model);
   }
 });
-
-app.post(
-  "/updateRecipe/:id",
-  upload.single("image"),
-  function (request, response) {
-    const id = request.params.id;
-    const newTitle = request.body.title;
-    const newDescription = request.body.description;
-    const newIngredients = request.body.ingredients;
-    const newDirections = request.body.directions;
-    const newDuration = request.body.duration;
-    const newCalories = request.body.calories;
-    const newCaloriesCategory = request.body.caloriesCategory;
-    const newDurationCategory = request.body.durationCategory;
-    const newImageURL = request.file.filename;
-
-    const errors = getValidationErrorsForRecipes(
-      newTitle,
-      newDescription,
-      newIngredients,
-      newDirections,
-      newDuration,
-      newCalories,
-      newCaloriesCategory,
-      newDurationCategory,
-      newImageURL
-    );
-
-    if (!request.session.isLoggedIn) {
-      errors.push("You are not logged in!");
-    }
-
-    if (errors.length == 0) {
-      const query =
-        "UPDATE recipes SET title = ?, description = ?, ingredients = ? , directions = ?, duration = ?, calories = ?, caloriesCategory = ?, durationCategory = ?, imageURL =?  WHERE id = ?";
-      const values = [
-        newTitle,
-        newDescription,
-        newIngredients,
-        newDirections,
-        newDuration,
-        newCalories,
-        newCaloriesCategory,
-        newDurationCategory,
-        newImageURL,
-        id,
-      ];
-
-      db.run(query, values, function (error) {
-        if (error) {
-          console.log(error);
-          errors.push("can't load due to internal server error");
-          const model = {
-            recipe: {
-              title: newTitle,
-              description: newDescription,
-              ingredients: newIngredients,
-              directions: newDirections,
-              duration: newDuration,
-              calories: newCalories,
-              caloriesCategory: newCaloriesCategory,
-              durationCategory: newDurationCategory,
-              imageURL: newImageURL,
-            },
-            errors,
-            id,
-          };
-          response.render("updateRecipe.hbs", model);
-        } else {
-          response.redirect("/recipes/" + id);
-        }
-      });
-    } else {
-      const model = {
-        recipe: {
-          title: newTitle,
-          description: newDescription,
-          ingredients: newIngredients,
-          directions: newDirections,
-          duration: newDuration,
-          calories: newCalories,
-          caloriesCategory: newCaloriesCategory,
-          durationCategory: newDurationCategory,
-          imageURL: newImageURL,
-        },
-        errors,
-        id,
-      };
-      response.render("updateRecipe.hbs", model);
-    }
-  }
-);
 
 app.post("/updateComment/:id/:blogPostId", function (request, response) {
   const id = request.params.id;
@@ -676,6 +692,22 @@ app.get("/", function (request, response) {
 });
 
 ///recipes get rq
+app.get("/recipes", function (request, response) {
+  const query = "SELECT * FROM recipes";
+  db.all(query, function (error, recipes) {
+    if (error) {
+      console.log(error);
+      const model = {
+        recipes,
+        errors: ["can't load due to internal server error"],
+      };
+      response.render("recipes.hbs", model);
+    } else {
+      const model = { recipes };
+      response.render("recipes.hbs", model);
+    }
+  });
+});
 
 //BLOG PAGE
 app.get("/blogs", function (request, response) {
