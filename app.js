@@ -5,10 +5,7 @@ const sqlite3 = require("sqlite3");
 const expressSession = require("express-session");
 const SQLiteStore = require("connect-sqlite3")(expressSession);
 const like = require("like");
-// const filter = like(searchField.value);
-// const matches = items.filter(function (x) {
-//   return filter.test(x);
-// });
+const recipeRouter = require("./routers/recipeRouter");
 
 const multer = require("multer");
 
@@ -97,6 +94,8 @@ app.use(function (request, response, next) {
   next();
   //next to invoke the next middleware
 });
+
+app.use("/recipes", recipeRouter);
 
 /////ERRORS SECTION///////////
 function getErrorsForSearch(search, calories, duration) {
@@ -676,23 +675,7 @@ app.get("/", function (request, response) {
   response.render("start.hbs");
 });
 
-///recipes
-app.get("/recipes", function (request, response) {
-  const query = "SELECT * FROM recipes";
-  db.all(query, function (error, recipes) {
-    if (error) {
-      console.log(error);
-      const model = {
-        recipes,
-        errors: ["can't load due to internal server error"],
-      };
-      response.render("recipes.hbs", model);
-    } else {
-      const model = { recipes };
-      response.render("recipes.hbs", model);
-    }
-  });
-});
+///recipes get rq
 
 //BLOG PAGE
 app.get("/blogs", function (request, response) {
