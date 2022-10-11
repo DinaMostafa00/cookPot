@@ -100,7 +100,7 @@ function getErrorsForSearch(search, calories, duration) {
   return errors;
 }
 
-//error handling for blogs
+//error handling for comments
 function getValidationErrorsForComments(commenterName, title, comment) {
   const validationErrors = [];
 
@@ -446,7 +446,11 @@ app.get("/recipes/:id", function (request, response) {
 });
 
 app.get("/createRecipe", function (request, response) {
-  response.render("createRecipe.hbs");
+  if (request.session.isLoggedIn) {
+    response.render("createRecipe.hbs");
+  } else {
+    response.render("authorizationErorrs.hbs");
+  }
 });
 
 app.get("/updateRecipe/:id", function (request, response) {
@@ -464,31 +468,40 @@ app.get("/updateRecipe/:id", function (request, response) {
       };
       response.render("updateRecipe.hbs", model);
     } else {
-      const model = {
-        recipe,
-        id,
-        isSomethingQuickSelected: recipe.durationCategory == "Something quick",
-        isIHaveTimeSelected: recipe.durationCategory == "I have time",
-        isLowInCaloriesSelected: recipe.caloriesCategory == "Low in calories",
-        isHighInCaloriesHighSelected:
-          recipe.caloriesCategory == "High in calories",
-      };
-      response.render("updateRecipe.hbs", model);
+      if (request.session.isLoggedIn) {
+        const model = {
+          recipe,
+          id,
+          isSomethingQuickSelected:
+            recipe.durationCategory == "Something quick",
+          isIHaveTimeSelected: recipe.durationCategory == "I have time",
+          isLowInCaloriesSelected: recipe.caloriesCategory == "Low in calories",
+          isHighInCaloriesHighSelected:
+            recipe.caloriesCategory == "High in calories",
+        };
+        response.render("updateRecipe.hbs", model);
+      } else {
+        response.render("authorizationErorrs.hbs");
+      }
     }
   });
 });
 
 app.get("/deleteRecipe/:id", function (request, response) {
-  const id = request.params.id;
-  const model = {
-    id,
-  };
-  response.render("deleteRecipe.hbs", model);
+  if (request.session.isLoggedIn) {
+    const id = request.params.id;
+    const model = {
+      id,
+    };
+    response.render("deleteRecipe.hbs", model);
+  } else {
+    response.render("authorizationErorrs.hbs");
+  }
 });
 ///////
 
 /////BLOGGGGG//////////
-app.post("/blogs/:id", function (request, response) {
+app.post("/blogPosts/:id", function (request, response) {
   const commenterName = request.body.commenterName;
   const title = request.body.title;
   const comment = request.body.comment;
@@ -535,7 +548,7 @@ app.post("/blogs/:id", function (request, response) {
             errors.push("can't load due to internal server error");
             response.render("singleBlog.hbs", model);
           } else {
-            response.redirect("/blogs/" + blogPostId);
+            response.redirect("/blogPosts/" + blogPostId);
           }
         });
       } else {
@@ -568,7 +581,7 @@ app.post("/createBlogPost", function (request, response) {
         const model = { errors, title, content, source };
         response.render("createBlogPost.hbs", model);
       } else {
-        response.redirect("/blogs");
+        response.redirect("/blogPosts");
       }
     });
   } else {
@@ -596,7 +609,7 @@ app.post("/deleteBlogPost/:id", function (request, response) {
         };
         response.render("deleteBlogPost.hbs", model);
       } else {
-        response.redirect("/blogs");
+        response.redirect("/blogPosts");
       }
     });
   } else {
@@ -640,7 +653,7 @@ app.post("/updateBlogPost/:id", function (request, response) {
         };
         response.render("updateBlogPost.hbs", model);
       } else {
-        response.redirect("/blogs/" + id);
+        response.redirect("/blogPosts/" + id);
       }
     });
   } else {
@@ -667,7 +680,7 @@ app.get("/blogPosts", function (request, response) {
         blogPosts,
         errors: ["can't load due to internal server error"],
       };
-      response.render("blogs.hbs", model);
+      response.render("blogPosts.hbs", model);
     } else {
       const model = { blogPosts };
       response.render("blogPosts.hbs", model);
@@ -675,7 +688,7 @@ app.get("/blogPosts", function (request, response) {
   });
 });
 
-app.get("/blogs/:id", function (request, response) {
+app.get("/blogPosts/:id", function (request, response) {
   const id = request.params.id;
   const querySelectBlogPost = "SELECT * FROM blogPosts WHERE id= ? ";
   const querySelectComments = "SELECT * FROM comments WHERE blogPostId= ? ";
@@ -697,15 +710,23 @@ app.get("/blogs/:id", function (request, response) {
 });
 
 app.get("/createBlogPost", function (request, response) {
-  response.render("createBlogPost.hbs");
+  if (request.session.isLoggedIn) {
+    response.render("createBlogPost.hbs");
+  } else {
+    response.render("authorizationErorrs.hbs");
+  }
 });
 
 app.get("/deleteBlogPost/:id", function (request, response) {
-  const id = request.params.id;
-  const model = {
-    id,
-  };
-  response.render("deleteBlogPost.hbs", model);
+  if (request.session.isLoggedIn) {
+    const id = request.params.id;
+    const model = {
+      id,
+    };
+    response.render("deleteBlogPost.hbs", model);
+  } else {
+    response.render("authorizationErorrs.hbs");
+  }
 });
 
 app.get("/updateBlogPost/:id", function (request, response) {
@@ -723,8 +744,12 @@ app.get("/updateBlogPost/:id", function (request, response) {
       };
       response.render("updateBlogPost.hbs", model);
     } else {
-      const model = { blogPost, id };
-      response.render("updateBlogPost.hbs", model);
+      if (request.session.isLoggedIn) {
+        const model = { blogPost, id };
+        response.render("updateBlogPost.hbs", model);
+      } else {
+        response.render("authorizationErorrs.hbs");
+      }
     }
   });
 });
@@ -743,6 +768,10 @@ app.post("/updateComment/:id/:blogPostId", function (request, response) {
     newTitle,
     newComment
   );
+
+  if (!request.session.isLoggedIn) {
+    errors.push("You are not logged in!");
+  }
 
   if (errors.length == 0) {
     const query =
@@ -764,7 +793,7 @@ app.post("/updateComment/:id/:blogPostId", function (request, response) {
 
         response.render("updateComment.hbs", model);
       } else {
-        response.redirect("/blogs/" + blogPostId);
+        response.redirect("/blogPosts/" + blogPostId);
       }
     });
   } else {
@@ -799,7 +828,7 @@ app.post("/deleteComment/:id/:blogPostId", function (request, response) {
         };
         response.render("deleteComment.hbs", model);
       } else {
-        response.redirect("/blogs/" + blogPostId);
+        response.redirect("/blogPosts/" + blogPostId);
       }
     });
   } else {
@@ -816,11 +845,16 @@ app.post("/deleteComment/:id/:blogPostId", function (request, response) {
 app.get("/deleteComment/:id/:blogPostId", function (request, response) {
   const id = request.params.id;
   const blogPostId = request.params.blogPostId;
-  const model = {
-    id,
-    blogPostId,
-  };
-  response.render("deleteComment.hbs", model);
+
+  if (request.session.isLoggedIn) {
+    const model = {
+      id,
+      blogPostId,
+    };
+    response.render("deleteComment.hbs", model);
+  } else {
+    response.render("authorizationErorrs.hbs");
+  }
 });
 
 app.get("/updateComment/:id/:blogPostId/", function (request, response) {
@@ -839,24 +873,26 @@ app.get("/updateComment/:id/:blogPostId/", function (request, response) {
       };
       response.render("updateComment.hbs", model);
     } else {
-      const model = {
-        id,
-        comment,
-      };
-      response.render("updateComment.hbs", model);
+      if (request.session.isLoggedIn) {
+        const model = {
+          id,
+          comment,
+        };
+        response.render("updateComment.hbs", model);
+      } else {
+        response.render("authorizationErorrs.hbs");
+      }
     }
   });
 });
+
 ///////////////////////////////////
 
 /// POSSTTT  for login
 app.post("/login", function (request, response) {
   const enteredUsername = request.body.username;
   const enteredPassword = request.body.password;
-  // if (
-  //   enteredUsername == correctUsername &&
-  //   enteredPassword == correctPassword
-  // ) {
+
   const errors = getErrorsForLogIn(enteredUsername, enteredPassword);
 
   if (errors.length == 0) {
