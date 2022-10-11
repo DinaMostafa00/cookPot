@@ -509,10 +509,6 @@ app.post("/blogPosts/:id", function (request, response) {
 
   const errors = getValidationErrorsForComments(commenterName, title, comment);
 
-  if (!request.session.isLoggedIn) {
-    errors.push("You are not logged in!");
-  }
-
   /////// the same from the get request to fetc
   const querySelectBlogPost = "SELECT * FROM blogPosts WHERE id= ? ";
   const querySelectComments = "SELECT * FROM comments WHERE blogPostId= ? ";
@@ -756,6 +752,7 @@ app.get("/updateBlogPost/:id", function (request, response) {
 ///////
 
 /////COMMENTTTT//////////
+///id question
 app.post("/updateComment/:id/:blogPostId", function (request, response) {
   const id = request.params.id;
   const blogPostId = request.params.blogPostId;
@@ -805,6 +802,7 @@ app.post("/updateComment/:id/:blogPostId", function (request, response) {
         blogPostId,
       },
       errors,
+      id,
     };
 
     response.render("updateComment.hbs", model);
