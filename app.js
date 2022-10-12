@@ -217,9 +217,8 @@ app.post("/createRecipe", upload.single("image"), function (request, response) {
 
   if (errors.length == 0) {
     const imageURL = request.file.filename;
-    const query =
-      "INSERT INTO recipes (title, description, ingredients, directions, duration, calories, caloriesCategory, durationCategory, imageURL) values (?,?,?,?,?,?,?,?,?) ";
-    const values = [
+
+    db.createRecipe(
       title,
       description,
       ingredients,
