@@ -1,11 +1,17 @@
 /// loading section
 const express = require("express");
 const expressHandlebars = require("express-handlebars");
-const sqlite3 = require("sqlite3");
+
 const expressSession = require("express-session");
 const SQLiteStore = require("connect-sqlite3")(expressSession);
 const like = require("like");
 const multer = require("multer");
+
+//here we import the db functions:
+
+const db = require("./db.js");
+
+//
 
 // here we determind where we gonna store the imgs and their name
 //null refer to the errors we dont care here so much
@@ -30,23 +36,6 @@ const minCommentLength = 2;
 const correctUsername = "dina";
 const correctPassword = "123";
 const app = express();
-
-///database and SQLITE
-const db = new sqlite3.Database("cookPotDatabase.db");
-
-db.run("PRAGMA foreign_keys = ON");
-
-db.run(
-  "CREATE TABLE IF NOT EXISTS recipes (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, ingredients TEXT, directions TEXT, duration INTEGER, calories INTEGER, caloriesCategory TEXT, durationCategory TEXT, imageURL TEXT )"
-);
-
-db.run(
-  "CREATE TABLE IF NOT EXISTS blogPosts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, source TEXT)"
-);
-
-db.run(
-  "CREATE TABLE IF NOT EXISTS comments (id INTEGER PRIMARY KEY AUTOINCREMENT, commenterName TEXT, title TEXT, comment TEXT, blogPostId INTEGER, FOREIGN KEY (blogPostId) REFERENCES blogPosts(id) ON DELETE CASCADE)"
-);
 
 //////Middleware section
 
@@ -240,28 +229,29 @@ app.post("/createRecipe", upload.single("image"), function (request, response) {
       caloriesCategory,
       durationCategory,
       imageURL,
-    ];
+      function (error) {
+        // })
 
-    db.run(query, values, function (error) {
-      if (error) {
-        console.log(error);
-        errors.push("can't load due to internal server error");
-        const model = {
-          errors,
-          title,
-          description,
-          ingredients,
-          directions,
-          duration: request.body.duration,
-          calories: request.body.calories,
-          caloriesCategory,
-          durationCategory,
-        };
-        response.render("createRecipe.hbs", model);
-      } else {
-        response.redirect("/recipes");
+        if (error) {
+          console.log(error);
+          errors.push("can't load due to internal server error");
+          const model = {
+            errors,
+            title,
+            description,
+            ingredients,
+            directions,
+            duration: request.body.duration,
+            calories: request.body.calories,
+            caloriesCategory,
+            durationCategory,
+          };
+          response.render("createRecipe.hbs", model);
+        } else {
+          response.redirect("/recipes");
+        }
       }
-    });
+    );
   } else {
     const model = {
       errors,
@@ -317,9 +307,8 @@ app.post(
 
     if (errors.length == 0) {
       const newImageURL = request.file.filename;
-      const query =
-        "UPDATE recipes SET title = ?, description = ?, ingredients = ? , directions = ?, duration = ?, calories = ?, caloriesCategory = ?, durationCategory = ?, imageURL =?  WHERE id = ?";
-      const values = [
+
+      db.updateRecipe(
         newTitle,
         newDescription,
         newIngredients,
@@ -330,31 +319,30 @@ app.post(
         newDurationCategory,
         newImageURL,
         id,
-      ];
-
-      db.run(query, values, function (error) {
-        if (error) {
-          console.log(error);
-          errors.push("can't load due to internal server error");
-          const model = {
-            recipe: {
-              title: newTitle,
-              description: newDescription,
-              ingredients: newIngredients,
-              directions: newDirections,
-              duration: newDuration,
-              calories: newCalories,
-              caloriesCategory: newCaloriesCategory,
-              durationCategory: newDurationCategory,
-            },
-            errors,
-            id,
-          };
-          response.render("updateRecipe.hbs", model);
-        } else {
-          response.redirect("/recipes/" + id);
+        function (error) {
+          if (error) {
+            console.log(error);
+            errors.push("can't load due to internal server error");
+            const model = {
+              recipe: {
+                title: newTitle,
+                description: newDescription,
+                ingredients: newIngredients,
+                directions: newDirections,
+                duration: newDuration,
+                calories: newCalories,
+                caloriesCategory: newCaloriesCategory,
+                durationCategory: newDurationCategory,
+              },
+              errors,
+              id,
+            };
+            response.render("updateRecipe.hbs", model);
+          } else {
+            response.redirect("/recipes/" + id);
+          }
         }
-      });
+      );
     } else {
       const model = {
         recipe: {
@@ -382,10 +370,7 @@ app.post(
 app.post("/deleteRecipe/:id", function (request, response) {
   const id = request.params.id;
   if (request.session.isLoggedIn) {
-    const query = "DELETE FROM recipes WHERE id=?";
-    const values = [id];
-    console.log(values);
-    db.run(query, values, function (error) {
+    db.deleteRecipe(id, function (error) {
       if (error) {
         console.log(error);
         const model = {
@@ -405,11 +390,11 @@ app.post("/deleteRecipe/:id", function (request, response) {
     response.render("deleteRecipe.hbs", model);
   }
 });
+
 ///get
 
 app.get("/recipes", function (request, response) {
-  const query = "SELECT * FROM recipes";
-  db.all(query, function (error, recipes) {
+  db.getAllRecipes(function (error, recipes) {
     if (error) {
       console.log(error);
       const model = {
@@ -426,9 +411,8 @@ app.get("/recipes", function (request, response) {
 
 app.get("/recipes/:id", function (request, response) {
   const id = request.params.id; //to get the actual value of the id
-  const query = "SELECT * FROM recipes WHERE id= ?";
-  const values = [id];
-  db.get(query, values, function (error, recipe) {
+
+  db.getRecipeById(id, function (error, recipe) {
     if (error) {
       console.log(error);
       const model = {
@@ -441,8 +425,6 @@ app.get("/recipes/:id", function (request, response) {
       response.render("singleRecipe.hbs", model);
     }
   });
-
-  // const recipe = data.recipes.find((recipe) => recipe.id == id); // we call a method on this array (find) to find a project whose id is equal to what stored in the id variable
 });
 
 app.get("/createRecipe", function (request, response) {
@@ -455,10 +437,8 @@ app.get("/createRecipe", function (request, response) {
 
 app.get("/updateRecipe/:id", function (request, response) {
   const id = request.params.id;
-  const query = "SELECT * FROM recipes WHERE id = ?";
-  const values = [id];
 
-  db.get(query, values, function (error, recipe) {
+  db.getRecipeById(id, function (error, recipe) {
     if (error) {
       console.log(error);
       const model = {
@@ -501,6 +481,7 @@ app.get("/deleteRecipe/:id", function (request, response) {
 ///////
 
 /////BLOGGGGG//////////
+////Q
 app.post("/blogPosts/:id", function (request, response) {
   const commenterName = request.body.commenterName;
   const title = request.body.title;
@@ -510,16 +491,11 @@ app.post("/blogPosts/:id", function (request, response) {
   const errors = getValidationErrorsForComments(commenterName, title, comment);
 
   /////// the same from the get request to fetc
-  const querySelectBlogPost = "SELECT * FROM blogPosts WHERE id= ? ";
-  const querySelectComments = "SELECT * FROM comments WHERE blogPostId= ? ";
-
-  const values = [blogPostId];
-
-  db.get(querySelectBlogPost, values, function (error, blogPost) {
+  db.getBlogPostbyId(blogPostId, function (error, blogPost) {
     if (error) {
       errors.push("can't load due to internal server error");
     }
-    db.all(querySelectComments, values, function (error, comments) {
+    db.getCommentbyPostId(blogPostId, function (error, comments) {
       if (error) {
         errors.push("can't load due to internal server error");
       }
@@ -534,19 +510,21 @@ app.post("/blogPosts/:id", function (request, response) {
       };
 
       if (errors.length == 0) {
-        const query =
-          "INSERT INTO comments (commenterName, title, comment, blogPostId) values (?,?,?,?) ";
-        const values = [commenterName, title, comment, blogPostId];
-
-        db.run(query, values, function (error) {
-          if (error) {
-            console.log(error);
-            errors.push("can't load due to internal server error");
-            response.render("singleBlog.hbs", model);
-          } else {
-            response.redirect("/blogPosts/" + blogPostId);
+        db.createComment(
+          commenterName,
+          title,
+          comment,
+          blogPostId,
+          function (error) {
+            if (error) {
+              console.log(error);
+              errors.push("can't load due to internal server error");
+              response.render("singleBlog.hbs", model);
+            } else {
+              response.redirect("/blogPosts/" + blogPostId);
+            }
           }
-        });
+        );
       } else {
         response.render("singleBlog.hbs", model);
       }
@@ -566,11 +544,7 @@ app.post("/createBlogPost", function (request, response) {
   }
 
   if (errors.length == 0) {
-    const query =
-      "INSERT INTO blogPosts (title, content, source) values (?,?,?) ";
-    const values = [title, content, source];
-
-    db.run(query, values, function (error) {
+    db.createBlogPost(title, content, source, function (error) {
       if (error) {
         console.log(error);
         errors.push("can't load due to internal server error");
@@ -594,9 +568,7 @@ app.post("/createBlogPost", function (request, response) {
 app.post("/deleteBlogPost/:id", function (request, response) {
   const id = request.params.id;
   if (request.session.isLoggedIn) {
-    const query = "DELETE FROM blogPosts WHERE id=?";
-    const values = [id];
-    db.run(query, values, function (error) {
+    db.deleteBlogPost(id, function (error) {
       if (error) {
         console.log(error);
         const model = {
@@ -630,11 +602,7 @@ app.post("/updateBlogPost/:id", function (request, response) {
   }
 
   if (errors.length == 0) {
-    const query =
-      "UPDATE blogPosts SET title = ?, content = ?, source = ?  WHERE id = ?";
-    const values = [newTitle, newContent, newSource, id];
-
-    db.run(query, values, function (error) {
+    db.updateBlogPost(newTitle, newContent, newSource, id, function (error) {
       if (error) {
         console.log(error);
         errors.push("can't load due to internal server error");
@@ -668,8 +636,7 @@ app.post("/updateBlogPost/:id", function (request, response) {
 
 ///get
 app.get("/blogPosts", function (request, response) {
-  const query = "SELECT * FROM blogPosts";
-  db.all(query, function (error, blogPosts) {
+  db.getAllBlogPosts(function (error, blogPosts) {
     if (error) {
       console.log(error);
       const model = {
@@ -684,18 +651,16 @@ app.get("/blogPosts", function (request, response) {
   });
 });
 
-app.get("/blogPosts/:id", function (request, response) {
-  const id = request.params.id;
-  const querySelectBlogPost = "SELECT * FROM blogPosts WHERE id= ? ";
-  const querySelectComments = "SELECT * FROM comments WHERE blogPostId= ? ";
-  const values = [id];
-  const errors = [];
+app.get("/blogPosts/:PostId", function (request, response) {
+  const PostId = request.params.PostId;
 
-  db.get(querySelectBlogPost, values, function (error, blogPost) {
+  const errors = [];
+  db.getBlogPostbyId(PostId, function (error, blogPost) {
     if (error) {
       errors.push("can't load due to internal server error");
     }
-    db.all(querySelectComments, values, function (error, comments) {
+
+    db.getCommentbyPostId(PostId, function (error, comments) {
       if (error) {
         errors.push("can't load due to internal server error");
       }
@@ -727,10 +692,7 @@ app.get("/deleteBlogPost/:id", function (request, response) {
 
 app.get("/updateBlogPost/:id", function (request, response) {
   const id = request.params.id;
-  const query = "SELECT * FROM blogPosts WHERE id = ?";
-  const values = [id];
-
-  db.get(query, values, function (error, blogPost) {
+  db.getBlogPostbyId(id, function (error, blogPost) {
     if (error) {
       console.log(error);
       const model = {
@@ -771,28 +733,31 @@ app.post("/updateComment/:id/:blogPostId", function (request, response) {
   }
 
   if (errors.length == 0) {
-    const query =
-      "UPDATE comments SET commenterName = ?, title = ?, comment = ? WHERE id = ?";
-    const values = [newCommenterName, newTitle, newComment, id];
-    db.run(query, values, function (error) {
-      if (error) {
-        console.log(error);
-        errors.push("can't load due to internal server error");
-        const model = {
-          comment: {
-            commenterName: newCommenterName,
-            title: newTitle,
-            comment: newComment,
-            blogPostId,
-          },
-          errors,
-        };
+    db.updateComment(
+      newCommenterName,
+      newTitle,
+      newComment,
+      id,
+      function (error) {
+        if (error) {
+          console.log(error);
+          errors.push("can't load due to internal server error");
+          const model = {
+            comment: {
+              commenterName: newCommenterName,
+              title: newTitle,
+              comment: newComment,
+              blogPostId,
+            },
+            errors,
+          };
 
-        response.render("updateComment.hbs", model);
-      } else {
-        response.redirect("/blogPosts/" + blogPostId);
+          response.render("updateComment.hbs", model);
+        } else {
+          response.redirect("/blogPosts/" + blogPostId);
+        }
       }
-    });
+    );
   } else {
     const model = {
       comment: {
@@ -813,10 +778,7 @@ app.post("/deleteComment/:id/:blogPostId", function (request, response) {
   const id = request.params.id;
   const blogPostId = request.params.blogPostId;
   if (request.session.isLoggedIn) {
-    const query = "DELETE FROM comments WHERE id=?";
-    const values = [id];
-    // console.log(values);
-    db.run(query, values, function (error) {
+    db.deleteComment(id, function (error) {
       if (error) {
         console.log(error);
         const model = {
@@ -859,9 +821,7 @@ app.get("/updateComment/:id/:blogPostId/", function (request, response) {
   const id = request.params.id;
   const blogPostId = request.params.blogPostId;
 
-  const query = "SELECT * FROM comments WHERE id=?";
-  const values = [id];
-  db.get(query, values, function (error, comment) {
+  db.getCommentbyId(id, function (error, comment) {
     if (error) {
       console.log(error);
       const model = {
@@ -938,31 +898,26 @@ app.get("/search", function (request, response) {
   const calories = request.query.calories;
 
   if (duration && calories && search) {
-    const query =
-      "SELECT * FROM recipes WHERE durationCategory LIKE ? AND caloriesCategory LIKE ? AND title LIKE ? ";
-
-    const values = [
-      "%" + duration + "%",
-      "%" + calories + "%",
-      "%" + search + "%",
-    ];
-    db.all(query, values, function (error, recipes) {
-      if (error) {
-        console.log(error);
-        const model = {
-          recipes,
-          errors: ["can't load due to internal server error"],
-        };
-        response.render("searchResults.hbs", model);
-      } else {
-        const model = { recipes };
-        response.render("searchResults.hbs", model);
+    db.getResultsForSearchAndDurationAndCalories(
+      duration,
+      calories,
+      search,
+      function (error, recipes) {
+        if (error) {
+          console.log(error);
+          const model = {
+            recipes,
+            errors: ["can't load due to internal server error"],
+          };
+          response.render("searchResults.hbs", model);
+        } else {
+          const model = { recipes };
+          response.render("searchResults.hbs", model);
+        }
       }
-    });
+    );
   } else if (search) {
-    const query = "SELECT * FROM recipes WHERE title LIKE ?";
-    const values = ["%" + search + "%"];
-    db.all(query, values, function (error, recipes) {
+    db.getResultsForSearch(search, function (error, recipes) {
       if (error) {
         console.log(error);
         const model = {
@@ -976,9 +931,7 @@ app.get("/search", function (request, response) {
       }
     });
   } else if (duration) {
-    const query = "SELECT * FROM recipes WHERE durationCategory LIKE ?";
-    const values = ["%" + duration + "%"];
-    db.all(query, values, function (error, recipes) {
+    db.getResultsForDuration(duration, function (error, recipes) {
       if (error) {
         console.log(error);
         const model = {
@@ -992,9 +945,7 @@ app.get("/search", function (request, response) {
       }
     });
   } else if (calories) {
-    const query = "SELECT * FROM recipes WHERE caloriesCategory LIKE ?";
-    const values = ["%" + calories + "%"];
-    db.all(query, values, function (error, recipes) {
+    db.getResultsForCalories(calories, function (error, recipes) {
       if (error) {
         console.log(error);
         const model = {
