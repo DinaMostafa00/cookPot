@@ -3,19 +3,13 @@
 }
 
 .startPage .heroText {
-  color: yellow;
+  color: #ffffff;
   font-size: 3rem;
   display: flex;
   justify-content: center;
+  font-family: "Pacifico", cursive;
+  font-size: 5rem;
 }
-
-/* //Question here */
-/* 
-.startPage .adjustingImg {
-  width: 400px;
-  height: 500px;
-  object-fit: contain;
-} */
 
 .loginAdjusment {
   margin-left: 1%;

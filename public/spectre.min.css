@@ -1185,9 +1185,10 @@ code {
   width: 100%;
 }
 .img-responsive {
-  display: block;
-  height: auto;
+  /* display: block; */
+  height: 30rem;
   max-width: 100%;
+  object-fit: cover;
 }
 .img-fit-cover {
   object-fit: cover;
@@ -2747,14 +2748,14 @@ a.text-error:visited {
   color: #fff;
 }
 .bg-secondary {
-  background: #f1f1fc !important;
+  background: #bbbbc5 !important;
 }
 .bg-dark {
   background: #303742 !important;
   color: #fff;
 }
 .bg-gray {
-  background: #5755d9 !important;
+  background: #d1d0f4;
 }
 .bg-success {
   background: #32b643 !important;
