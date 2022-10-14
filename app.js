@@ -6,7 +6,7 @@ const expressSession = require("express-session");
 const SQLiteStore = require("connect-sqlite3")(expressSession);
 const like = require("like");
 const multer = require("multer");
-
+const bcrypt = require("bcrypt");
 //here we import the db functions:
 
 const db = require("./db.js");
@@ -34,7 +34,8 @@ const minCommenterNameLength = 2;
 const minTitleLength = 2;
 const minCommentLength = 2;
 const correctUsername = "dina";
-const correctPassword = "123";
+const correctHashedPassword =
+  "$2b$10$HDJEaJ8/aNL2rwlQWYKeo.zOrZ7QGzRZwAYJQRalKiZ5DM/kUXe5u";
 const app = express();
 
 //////Middleware section
@@ -172,12 +173,9 @@ function getValidationErrorsForRecipes(
   return validationErrors;
 }
 //error handling for login
-function getErrorsForLogIn(enteredUsername, enteredPassword) {
+function getErrorsForLogIn(enteredUsername, isHashed) {
   const errors = [];
-  if (
-    enteredUsername != correctUsername ||
-    enteredPassword != correctPassword
-  ) {
+  if (enteredUsername != correctUsername || isHashed == false) {
     errors.push("Incorrect User name or Password!");
   }
   return errors;
@@ -850,7 +848,9 @@ app.post("/login", function (request, response) {
   const enteredUsername = request.body.username;
   const enteredPassword = request.body.password;
 
-  const errors = getErrorsForLogIn(enteredUsername, enteredPassword);
+  const isHashed = bcrypt.compareSync(enteredPassword, correctHashedPassword);
+
+  const errors = getErrorsForLogIn(enteredUsername, isHashed);
 
   if (errors.length == 0) {
     request.session.isLoggedIn = true;

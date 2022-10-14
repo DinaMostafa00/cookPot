@@ -111,7 +111,6 @@ exports.deleteRecipe = function (id, callback) {
 
 ////BLOGS AND COMMENT
 //get
-
 exports.getAllBlogPosts = function (callback) {
   const query = "SELECT * FROM blogPosts";
   db.all(query, function (error, blogPosts) {
@@ -164,7 +163,6 @@ exports.updateComment = function (
 };
 
 //POST///
-
 exports.createBlogPost = function (title, content, source, callback) {
   const query =
     "INSERT INTO blogPosts (title, content, source) values (?,?,?) ";
@@ -210,6 +208,7 @@ exports.createComment = function (
     callback(error);
   });
 };
+/////
 
 ///SEARCH
 exports.getResultsForSearchAndDurationAndCalories = function (
