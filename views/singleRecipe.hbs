@@ -1,22 +1,37 @@
-{{#if recipe}}
-  <h1>
-    {{recipe.title}}
-    recipes
-  </h1>
-  <p>{{recipe.description}}</p>
-  <p>{{recipe.ingredients}}</p>
-  <p>{{recipe.directions}}</p>
-  <p>{{recipe.duration}}</p>
-  <p>{{recipe.calories}}</p>
-  <p>{{recipe.caloriesCategory}}</p>
-  <p>{{recipe.durationCategory}}</p>
-  <img src="/imgUploaded/{{recipe.imageURL}}" />
+<div class="adjustingPages">
+  {{#if recipe}}
+    <h1>
+      {{recipe.title}}
+    </h1>
 
-  {{#if isLoggedIn}}
-    <a href="/deleteRecipe/{{recipe.id}}">Delete recipe</a>
-    <a href="/updateRecipe/{{recipe.id}}">update recipes</a>
+    <img src="/imgUploaded/{{recipe.imageURL}}" class="recipeImgs" />
+    <h5>description</h5>
+    <p> {{recipe.description}}</p>
+    <h5>ingredients</h5>
+    <p>{{recipe.ingredients}}</p>
+    <h5>directions</h5>
+    <p> {{recipe.directions}}</p>
+    <h5>duration</h5>
+    <p> {{recipe.duration}}Minutes</p>
+    <h5>calories</h5>
+    <p> {{recipe.calories}} kcal</p>
+    <h5>caloriesCategory</h5>
+    <p>{{recipe.caloriesCategory}}</p>
+    <h5>durationCategory</h5>
+    <p> {{recipe.durationCategory}}</p>
+
+    {{#if isLoggedIn}}
+      <button class="btn btn-primary input-group-btn">
+        <a href="/deleteRecipe/{{recipe.id}}" class="showLink">Delete recipe</a>
+      </button>
+
+      <button class="btn btn-primary input-group-btn">
+        <a href="/updateRecipe/{{recipe.id}}" class="showLink">update recipes</a>
+      </button>
+
+    {{/if}}
+
+  {{else}}
+    <p> Recipes are being cooked currenlty</p>
   {{/if}}
-
-{{else}}
-  <p> Recipes are being cooked currenlty</p>
-{{/if}}
+</div>

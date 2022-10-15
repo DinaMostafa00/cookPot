@@ -1,105 +1,71 @@
-<h1>Create a recipe</h1>
-{{#if errors.length}}
-  <p> Can not create a recipe because:</p>
+<div class="adjustingPages">
+    <h1>Create a recipe</h1>
+    {{#if errors.length}}
+      <p> Can not create a recipe because:</p>
 
-  <ul>
-    {{#each errors}}
-      {{this}}
-    {{/each}}
-  </ul>
+      <ul>
+        {{#each errors}}
+          {{this}}
+        {{/each}}
+      </ul>
 
-{{/if}}
+    {{/if}}
 
-<form action="/createRecipe" method="post" enctype="multipart/form-data">
+    <form action="/createRecipe" method="post" enctype="multipart/form-data">
 
-  <div>
-    Add title:
-    <input type="text" name="title" value="{{title}}" />
-  </div>
+      <div>
+         <h6>Add title:</h6>
+        <input class="form-input" id="input-example-1"  type="text" name="title" value="{{title}}" />
+      </div>
 
-  <div>
-    Add description:
-    <input type="text" name="description" value="{{description}}" />
-  </div>
+      <div>
+        <h6>Add description:</h6>
+        <input class="form-input"  id="input-example-1" type="text" name="description" value="{{description}}" />
+      </div>
 
-  <div>
-    Add ingredients:
-    <input type="text" name="ingredients" value="{{ingredients}}" />
-  </div>
+      <div>
+           <h6>Add ingredients:</h6>
+        <input class="form-input inputFieldAdjustment" id="input-example-1"  type="text" name="ingredients" value="{{ingredients}}" />
+      </div>
 
-  <div>
-    Add directions:
-    <input type="text" name="directions" value="{{directions}}" />
-  </div>
+      <div>
+        <h6> Add directions:</h6>
+        <input class="form-input inputFieldAdjustment" id="input-example-1" type="text" name="directions" value="{{directions}}" />
+      </div>
 
-  <div>
-    Add duration:
-    <input type="text" name="duration" value="{{duration}}" />
-  </div>
+      <div>
+        <h6> Add duration:</h6>
+          <input class="form-input" id="input-example-1" type="text" name="duration" value="{{duration}}" />
+      </div>
 
-  <div>
-    Add calories:
-    <input type="text" name="calories" value="{{calories}}" />
-  </div>
+      <div>
+        Add calories:
+        <input class="form-input" id="input-example-1"  type="text" name="calories" value="{{calories}}" />
+      </div>
 
-<h2>Choose duration Category</h2>
-
-<select name="durationCategory">
-      <option> </option>
-      <option {{#if isSomethingQuickSelected}}selected{{/if}}>Something quick</option>
-      <option {{#if isIHaveTimeSelected}}selected{{/if}}>I have time</option>
-    </select>
-  </div>
-
- <select name="caloriesCategory">
-      <option> </option>
-      <option {{#if isLowInCaloriesSelected}}selected{{/if}}>Low in calories</option>
-      <option {{#if isHighInCaloriesHighSelected}}selected{{/if}}>High in calories </option>
-    </select>
-  </div>
-
-
-
-
-
-
- {{!-- <select name="durationCategory">
-      <option> </option>
-      <option>Something quick</option>
-      <option>I have time</option>
-    </select>
-  </div>
-<h2>Choose calories Category</h2>
- <select name="caloriesCategory" value="{{caloriesCategory}}">
-      <option> </option>
-      <option>Low in calories</option>
-      <option>High in calories </option>
-    </select>
-  </div> --}}
-
-
-
-
-<h1>Upload Images here</h1>
-
-
-<input type="file" name="image" />
-    <input type="submit" value="submit" />
-
-
-  {{!-- <form action="/uploadImg" method="post" enctype="multipart/form-data">
+    <h6>Choose duration Category</h6>
+    <select class="form-select" name="durationCategory">
+          <option> </option>
+          <option {{#if isSomethingQuickSelected}}selected{{/if}}>Something quick</option>
+          <option{{#if isIHaveTimeSelected}}selected{{/if}}>I have time</option>
+        </select>
+  
+<h6>Choose calories Category</h6>
+    <select  class="form-select" name="caloriesCategory">
+          <option> </option>
+          <option {{#if isLowInCaloriesSelected}}selected{{/if}}>Low in calories</option>
+          <option{{#if isHighInCaloriesHighSelected}}selected{{/if}}>High in calories </option>
+        </select>
+    
+    <h6>Upload Images here</h6>
 
     <input type="file" name="image" />
-    <input type="submit" value="submit" />
+      <input class="btn btn-primary input-group-btn" type="submit" value="submit" />
 
-  </form> --}}
-
-
+    </form>
 
 
-{{!-- <a href="/uploadImg"> Upload Imges here </a> --}}
-  {{!-- <input type="submit" value="Create" /> --}}
-
-</form>
+ </div>
 
 
+ 

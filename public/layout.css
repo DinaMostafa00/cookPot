@@ -20,3 +20,44 @@
   margin-left: 1%;
   margin-right: 25%;
 }
+
+#footer {
+  display: flex;
+  justify-content: center;
+  font-size: 1em;
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+.off-canvas .off-canvas-content {
+  padding: 0px;
+}
+
+#adjustingBurgerMenu li {
+  list-style-type: none;
+  padding: 10px;
+}
+
+#BodyAdjusting {
+  padding-top: 60px;
+}
+
+.showLink {
+  color: #fff;
+}
+
+.adjustingPages {
+  padding-left: 20%;
+  padding-right: 20%;
+  padding-bottom: 5%;
+}
+
+.recipeImgs {
+  height: 30rem;
+  max-width: 100%;
+  object-fit: cover;
+}
+
+.inputFieldAdjustment {
+  height: 10% !important;
+}

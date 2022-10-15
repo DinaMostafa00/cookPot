@@ -1,3 +1,6 @@
+
+<div class="adjustingPages">
+
 {{#if blogPost}}
   <h1>
     {{blogPost.title}}
@@ -10,7 +13,7 @@
     {{blogPost.source}}
   </p>
 
-  {{! /// to delete }}
+
 
       {{#if isLoggedIn}}
           <a href="/deleteBlogPost/{{blogPost.id}}">Delete blog post</a>
@@ -40,20 +43,20 @@
 
   <div>
     Name:
-    <input type="text" name="commenterName" value="{{commenterName}}" />
+    <input class="form-input" id="input-example-1"   type="text" name="commenterName" value="{{commenterName}}" />
   </div>
 
   <div>
     Title:
-    <input type="text" name="title" value="{{title}}" />
+    <input class="form-input" id="input-example-1"  type="text" name="title" value="{{title}}" />
   </div>
 
   <div>
     Comment:
-    <input type="text" name="comment" value="{{comment}}" />
+    <input class="form-input inputFieldAdjustment" id="input-example-1" type="text" name="comment" value="{{comment}}" />
   </div>
 
-  <input type="submit" value="Create" />
+  <input class="btn btn-primary input-group-btn" type="submit" value="Create" />
 
 </form>
 
@@ -85,3 +88,5 @@
 {{else}}
   <p> no comments at the moment</p>
 {{/if}}
+
+</div>

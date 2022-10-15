@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="/spectre-exp.min.css" />
     <link rel="stylesheet" href="/spectre-icons.min.css" />
     <link rel="stylesheet" href="/layout.css" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=yes"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -17,8 +21,9 @@
 
   </head>
   <body>
+    <!-- Naviagtion part -->
     <div class="headerAdjusting">
-      <header class="navbar">
+      <header class="navbar hide-sm">
         <section class="navbar-section">
           <a href="/" class="navbar-brand mr-2">Home</a>
           <a href="/recipes" class="btn btn-link">Recipes</a>
@@ -49,46 +54,82 @@
         <section class="navbar-section">
           <div class="input-group input-inline">
             <button class="btn btn-primary input-group-btn">
-              <a href="/search"> Search</a>
+              <a href="/search" class="showLink"> Search</a>
             </button>
           </div>
         </section>
       </header>
+
+      <!-- Humburger Menu resposive  -->
+      <div class="off-canvas show-sm">
+        <!-- off-screen toggle button -->
+        <a
+          class="off-canvas-toggle btn btn-primary btn-action"
+          href="#sidebar-id"
+        >
+          <i class="icon icon-menu"></i>
+        </a>
+
+        <div id="sidebar-id" class="off-canvas-sidebar">
+          <!-- off-screen sidebar -->
+          <div id="adjustingBurgerMenu">
+            <li> <a href="/" class="navbar-brand mr-2">Home</a> </li>
+            <li> <a href="/recipes" class="btn btn-link">Recipes</a> </li>
+
+            {{#if isLoggedIn}}
+              <li>
+                <a href="/createRecipe" class="btn btn-link">Create Recipe</a>
+              </li>
+            {{/if}}
+
+            <li><a href="/blogPosts" class="btn btn-link">Blogs</a></li>
+
+            {{#if isLoggedIn}}
+              <li><a href="/createBlogPost" class="btn btn-link">Create Blog
+                  Post</a></li>
+            {{/if}}
+
+            <li> <a href="/aboutme" class="btn btn-link">About Me</a> </li>
+
+            <li>
+              <a href="/contactme" class="btn btn-link">Contact Me</a>
+            </li>
+
+            {{#unless isLoggedIn}}
+              <li> <a href="/login" class="btn btn-link">Login</a> </li>
+            {{/unless}}
+
+            {{#if isLoggedIn}}
+              <li><a href="/logout" class="btn btn-link">Logout</a></li>
+            {{/if}}
+
+            <li>
+              <section class="navbar-section">
+          <div class="input-group input-inline">
+            <button class="btn btn-primary input-group-btn">
+              <a href="/search" class="showLink"> Search</a>
+            </button>
+          </div>
+        </section>
+      </header>
+
+            </li>
+
+          </div>
+        </div>
+
+        <a class="off-canvas-overlay" href="#close"></a>
+
+        <div class="off-canvas-content">
+          <!-- off-screen content -->
+          <div id="BodyAdjusting"> {{{body}}} </div>
+        </div>
+      </div>
     </div>
+    <div class="hide-sm">{{{body}}}</div>
 
-    {{!-- <a href="/">Home</a> 
-            
-             <a href="/recipes">Recipes</a></li>
-
-              {{#if isLoggedIn}}
-              <a href="/createRecipe"> Create Recipe</a> 
-              {{/if}}
-
-            <a href="/blogs">Blogs</a>
-
-              {{#if isLoggedIn}}
-             <a href="/createBlogPost"> Create Blog Post</a>
-              {{/if}}
-
-          
-            <a href="/aboutme">About Me</a>
-
-       
-       
-          <a href="/contactme">Contact Me</a>
-
-          {{#unless isLoggedIn}}
-          <a href="/login">Login</a>
-          {{/unless}}
-
-          {{#if isLoggedIn}}
-       <a href="/logout">Logout</a>
-          {{/if}} --}}
-
-    {{{body}}}
-
-    <footer>
-      Copyright Dina L-G 2022
+    <footer id="footer">
+      Copyright Dina Mostafa - 2022
     </footer>
 
   </body>
