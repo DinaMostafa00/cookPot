@@ -1,21 +1,11 @@
-/// loading section
 const express = require("express");
 const expressHandlebars = require("express-handlebars");
-
 const expressSession = require("express-session");
 const SQLiteStore = require("connect-sqlite3")(expressSession);
 const like = require("like");
 const multer = require("multer");
 const bcrypt = require("bcrypt");
-//here we import the db functions:
-
 const db = require("./db.js");
-
-//
-
-// here we determind where we gonna store the imgs and their name
-//null refer to the errors we dont care here so much
-//I understod that sytex here in cb is standrad but why only req not require ?///Q
 const storage = multer.diskStorage({
   destination(request, file, cb) {
     cb(null, "public/imgUploaded");
@@ -26,10 +16,7 @@ const storage = multer.diskStorage({
   },
 });
 
-//This is object that have every thing related to the storage
 const upload = multer({ storage: storage });
-
-///variables
 const minCommenterNameLength = 2;
 const minTitleLength = 2;
 const minCommentLength = 2;
@@ -37,22 +24,15 @@ const correctUsername = "dina";
 const correctHashedPassword =
   "$2b$10$HDJEaJ8/aNL2rwlQWYKeo.zOrZ7QGzRZwAYJQRalKiZ5DM/kUXe5u";
 const app = express();
-
-//////Middleware section
-
-//// watch again (3) 58:59
 app.use(
   expressSession({
     secret: "asdfghjkloiuytrezxcvbnm",
-    //control if the session is empty should be still stored in server side or not
     saveUninitialized: false,
-    //if the new session be stored in server oor not
     resave: false,
-    store: new SQLiteStore(), // to exsit the session only be logginout not restarting the progaram
+    store: new SQLiteStore(),
   })
 );
 
-////engine
 app.engine(
   "hbs",
   expressHandlebars.engine({
@@ -60,28 +40,21 @@ app.engine(
   })
 );
 
-/// static files
 app.use(express.static("public"));
 
-///QQQQQQQQQQQQQ
 app.use(
   express.urlencoded({
     extended: false,
   })
 );
 
-////our own middle ware for logging in - instead of writting it everywhere
-//// it will run everytime we recieve an http request
 app.use(function (request, response, next) {
   const isLoggedIn = request.session.isLoggedIn;
   response.locals.isLoggedIn = isLoggedIn;
-  //local is obj where we can add info to to be read by our views
   next();
-  //next to invoke the next middleware
 });
 
-////ERRORSSSS
-//error handling for search
+////ERRORS
 function getErrorsForSearch(search, calories, duration) {
   const errors = [];
   if (calories == "" && duration == "" && search == "") {
@@ -90,7 +63,6 @@ function getErrorsForSearch(search, calories, duration) {
   return errors;
 }
 
-//error handling for comments
 function getValidationErrorsForComments(commenterName, title, comment) {
   const validationErrors = [];
 
@@ -112,7 +84,6 @@ function getValidationErrorsForComments(commenterName, title, comment) {
   return validationErrors;
 }
 
-//error handling for blogs
 function getValidationErrorsForBlog(title, content, source) {
   const validationErrors = [];
 
@@ -128,7 +99,6 @@ function getValidationErrorsForBlog(title, content, source) {
   return validationErrors;
 }
 
-//error handling for recipes
 function getValidationErrorsForRecipes(
   title,
   description,
@@ -172,7 +142,7 @@ function getValidationErrorsForRecipes(
   }
   return validationErrors;
 }
-//error handling for login
+
 function getErrorsForLogIn(enteredUsername, isHashed) {
   const errors = [];
   if (enteredUsername != correctUsername || isHashed == false) {
@@ -180,7 +150,6 @@ function getErrorsForLogIn(enteredUsername, isHashed) {
   }
   return errors;
 }
-//////////////END OF ERRORS
 
 /////RECIPEEEE//////////
 //post
@@ -227,8 +196,6 @@ app.post("/createRecipe", upload.single("image"), function (request, response) {
       durationCategory,
       imageURL,
       function (error) {
-        // })
-
         if (error) {
           console.log(error);
           errors.push("can't load due to internal server error");
@@ -407,7 +374,7 @@ app.get("/recipes", function (request, response) {
 });
 
 app.get("/recipes/:id", function (request, response) {
-  const id = request.params.id; //to get the actual value of the id
+  const id = request.params.id;
 
   db.getRecipeById(id, function (error, recipe) {
     if (error) {
@@ -475,10 +442,9 @@ app.get("/deleteRecipe/:id", function (request, response) {
     response.render("authorizationErorrs.hbs");
   }
 });
-///////
 
-/////BLOGGGGG//////////
-////Q
+/////BLOG
+//post
 app.post("/blogPosts/:id", function (request, response) {
   const commenterName = request.body.commenterName;
   const title = request.body.title;
@@ -708,10 +674,9 @@ app.get("/updateBlogPost/:id", function (request, response) {
     }
   });
 });
-///////
 
 /////COMMENTTTT//////////
-///id question
+//post
 app.post("/updateComment/:id/:blogPostId", function (request, response) {
   const id = request.params.id;
   const blogPostId = request.params.blogPostId;
@@ -841,9 +806,8 @@ app.get("/updateComment/:id/:blogPostId/", function (request, response) {
   });
 });
 
-///////////////////////////////////
-
-/// POSSTTT  for login
+///login
+/// post
 app.post("/login", function (request, response) {
   const enteredUsername = request.body.username;
   const enteredPassword = request.body.password;
@@ -862,7 +826,6 @@ app.post("/login", function (request, response) {
 });
 
 ///post for logout
-/////SHOULD BE POST NOT GET BECAUSE THERE'S CHANGES MADE TO THE SESSION
 app.post("/logout", function (request, response) {
   request.session.isLoggedIn = false;
   response.redirect("/");

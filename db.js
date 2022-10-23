@@ -107,8 +107,6 @@ exports.deleteRecipe = function (id, callback) {
   });
 };
 
-///Recipes END.
-
 ////BLOGS AND COMMENT
 //get
 exports.getAllBlogPosts = function (callback) {
@@ -145,7 +143,6 @@ exports.getCommentbyId = function (id, callback) {
 exports.deleteComment = function (id, callback) {
   const query = "DELETE FROM comments WHERE id=?";
   const values = [id];
-  // console.log(values);
   db.run(query, values, callback);
 };
 

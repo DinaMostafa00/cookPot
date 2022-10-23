@@ -1,13 +1,11 @@
- 
    <h1>Update Recipe</h1>
-   {{#if errors.length}}
-  <p> Can not write a comment because:</p>
-
-  <ul>
-    {{#each errors}}
-      {{this}}
-    {{/each}}
-  </ul>
+{{#if errors.length}}
+      <p> Can not write a comment because:</p>
+      <ul>
+        {{#each errors}}
+          {{this}}
+        {{/each}}
+      </ul>
 
 {{/if}}
  
@@ -65,7 +63,5 @@
 
 <h1>update Images here</h1>
 
-
 <input type="file" name="image" />
-
-  <input type="submit" value="update" />
+ <input type="submit" value="update" />
