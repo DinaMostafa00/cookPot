@@ -3,7 +3,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dina's portfolio</title>
+    <title>Cook pot</title>
     <link rel="stylesheet" href="/spectre.min.css" />
     <link rel="stylesheet" href="/spectre-exp.min.css" />
     <link rel="stylesheet" href="/spectre-icons.min.css" />
@@ -12,6 +12,10 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=yes"
     />
+    
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -23,9 +27,10 @@
   <body>
     <!-- Naviagtion part -->
     <div class="headerAdjusting">
-      <header class="navbar hide-sm">
+      <header class="navbar hide-md">
         <section class="navbar-section">
-          <a href="/" class="navbar-brand mr-2">Home</a>
+          {{!-- <a href="/" class="navbar-brand mr-2">Home</a> --}}
+          <a href="/" class="btn btn-link" >Home</a>
           <a href="/recipes" class="btn btn-link">Recipes</a>
 
           {{#if isLoggedIn}}
@@ -49,19 +54,20 @@
           {{#if isLoggedIn}}
             <a href="/logout" class="btn btn-link">Logout</a>
           {{/if}}
+            
+            <a href="/search" class="btn btn-link"> Search</a>
+
         </section>
 
         <section class="navbar-section">
           <div class="input-group input-inline">
-            <button class="btn btn-primary input-group-btn">
-              <a href="/search" class="showLink"> Search</a>
-            </button>
+               <a href="/" class="btn btn-link logo" >Cook Pot</a>
           </div>
         </section>
       </header>
 
       <!-- Humburger Menu resposive  -->
-      <div class="off-canvas show-sm">
+      <div class="off-canvas show-md">
         <!-- off-screen toggle button -->
         <a
           class="off-canvas-toggle btn btn-primary btn-action"
@@ -105,28 +111,35 @@
 
             <li>
               <section class="navbar-section">
-          <div class="input-group input-inline">
-            <button class="btn btn-primary input-group-btn">
-              <a href="/search" class="showLink"> Search</a>
-            </button>
-          </div>
-        </section>
-      </header>
-
+                  <div class="input-group input-inline">
+                    <button class="btn btn-primary input-group-btn">
+                      <a href="/search" class="showLink"> Search</a>
+                    </button>
+                  </div>
+                </section>
             </li>
-
+      
           </div>
         </div>
+  
+               <a href="/" class="btn btn-link logo2" >Cook Pot</a>
+    
+          </header>
 
-        <a class="off-canvas-overlay" href="#close"></a>
+            <a class="off-canvas-overlay" href="#close"></a>
 
         <div class="off-canvas-content">
-          <!-- off-screen content -->
-          <div id="BodyAdjusting"> {{{body}}} </div>
-        </div>
-      </div>
-    </div>
-    <div class="hide-sm">{{{body}}}</div>
+              <!-- off-screen content -->
+              <div id="BodyAdjusting"> {{{body}}} </div>
+               <footer id="footer">
+      Copyright Dina Mostafa - 2022
+    </footer>
+            </div>
+         </div>
+      
+       </div>
+        
+    <div class="hide-md">{{{body}}}</div>
 
     <footer id="footer">
       Copyright Dina Mostafa - 2022

@@ -2,13 +2,46 @@
   padding: 1%;
 }
 
-.startPage .heroText {
-  color: #ffffff;
-  font-size: 3rem;
+.adjustingHero {
   display: flex;
   justify-content: center;
-  font-family: "Pacifico", cursive;
+}
+.heroText {
+  color: #ffffff;
+  font-size: 3rem;
+  display: inline-block;
+  justify-content: center;
+  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", sans-serif;
+  /* font-family: "Pacifico", cursive; */
+  /* font-family: "Playfair Display", serif; */
+  font-style: italic;
   font-size: 5rem;
+}
+
+.heroText2 {
+  color: #ffffff;
+  font-size: 3rem;
+  display: inline-block;
+  justify-content: center;
+  /* font-family: "Pacifico", cursive; */
+  font-family: "Playfair Display", serif;
+  font-style: italic;
+  font-size: 5rem;
+}
+
+.logo {
+  font-family: "Playfair Display", serif;
+  font-style: italic;
+  font-size: 190%;
+}
+
+.logo2 {
+  display: flex;
+  justify-content: end;
+  font-family: "Playfair Display", serif;
+  font-style: italic;
+  font-size: 190%;
 }
 
 .loginAdjusment {
@@ -39,7 +72,7 @@
 }
 
 #BodyAdjusting {
-  padding-top: 60px;
+  padding-top: 10px;
 }
 
 .showLink {
