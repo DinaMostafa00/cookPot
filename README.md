@@ -37,3 +37,5 @@ The application incorporates multiple security measures to handle vulnerabilitie
 ## Setup and Installation
 
 to run the application write node app.js in the terminal
+the app runs on http://localhost:8080
+
