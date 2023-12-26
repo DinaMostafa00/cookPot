@@ -5,7 +5,7 @@ const SQLiteStore = require("connect-sqlite3")(expressSession);
 const like = require("like");
 const multer = require("multer");
 const bcrypt = require("bcrypt");
-const db = require("./db.js");
+const db = require("../db.js");
 const storage = multer.diskStorage({
   destination(request, file, cb) {
     cb(null, "public/imgUploaded");
@@ -53,6 +53,9 @@ app.use(function (request, response, next) {
   response.locals.isLoggedIn = isLoggedIn;
   next();
 });
+
+let indexRouter = require("../routes/index");
+app.use("/", indexRouter);
 
 ////ERRORS
 function getErrorsForSearch(search, calories, duration) {
