@@ -30,6 +30,20 @@
   font-size: 5rem;
 }
 
+.subHeading {
+  font-family: "Playfair Display", serif;
+  font-style: italic;
+  font-size: 1rem;
+  padding-top: 1%;
+}
+
+.pageHeadings {
+  font-family: "Playfair Display", serif;
+  font-style: italic;
+  font-size: 2rem;
+  padding-top: 1%;
+}
+
 .logo {
   font-family: "Playfair Display", serif;
   font-style: italic;
@@ -79,16 +93,20 @@
   color: #fff;
 }
 
+.errosColor {
+  color: red;
+}
 .adjustingPages {
-  width: 80%; /* Or any specific width you prefer */
+  width: 80%;
   margin-left: auto;
   margin-right: auto;
   text-align: center;
 }
 
 .adjustingText {
+  width: 90%;
   text-align: left;
-  padding-left: 20%;
+  padding-left: 15%;
 }
 
 .recipeImgs {
@@ -112,6 +130,19 @@
 
 .addingMarginHeadings {
   margin-left: 3%;
+}
+
+.addPaddingComment {
+  padding-top: 5%;
+}
+
+.addMarginButton {
+  margin-top: 2%;
+}
+
+.addMargin {
+  margin-top: 1%;
+  margin-bottom: 1%;
 }
 
 @media (max-width: 768px) {

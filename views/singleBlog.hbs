@@ -2,7 +2,7 @@
   <div class="adjustingText">
 
 {{#if blogPost}}
-  <h1>
+  <h1 class="pageHeadings">
     {{blogPost.title}}
   </h1>
   <p>
@@ -23,7 +23,7 @@
   <p> this blog does not exist.</p>
 {{/if}}
 
-<h1>Leave comment here</h1>
+<h1 class="addPaddingComment thin-font">Leave comment here</h1>
 
 {{#if errors.length}}
   <p> Can not write a comment because:</p>
@@ -53,13 +53,13 @@
     <input class="form-input inputFieldAdjustment" id="input-example-1" type="text" name="comment" value="{{comment}}" />
   </div>
 
-  <input class="btn btn-primary input-group-btn" type="submit" value="Create" />
+  <input class="btn btn-primary input-group-btn addMarginButton" type="submit" value="Submit" />
 
 </form>
 
 
 
-<h1>Comments</h1>
+<h1 class="thin-font">Comments</h1>
 {{#if comments.length}}
   <ul>
     {{#each comments}}
@@ -79,7 +79,7 @@
     {{/each}}
   </ul>
 {{else}}
-  <p> no comments at the moment</p>
+  <p> No comments at the moment</p>
 {{/if}}
   </div>
 </div>

@@ -4,42 +4,42 @@
    <h1>Update Recipe</h1>
 {{#if errors.length}}
       <p> Can not write a comment because:</p>
-      <ul>
+      
         {{#each errors}}
-          {{this}}
+           <li class="errosColor"> {{this}} </li>
         {{/each}}
-      </ul>
+     
 
 {{/if}}
  
  
  <form action="/updateRecipe/{{id}}" method="post" enctype="multipart/form-data">
-  <div>
+  <div class="addMargin">
     update title:
     <input type="text" name="title" value="{{recipe.title}}" />
   </div>
 
-  <div>
+  <div class="addMargin">
     update description:
     <input type="text" name="description" value="{{recipe.description}}" />
   </div>
 
-  <div>
+  <div class="addMargin">
     update ingredients:
     <input type="text" name="ingredients" value="{{recipe.ingredients}}" />
   </div>
 
- <div>
+ <div class="addMargin">
     update directions:
     <input type="text" name="directions" value="{{recipe.directions}}" />
   </div>
 
-  <div>
+  <div class="addMargin">
     update duration:
     <input type="text" name="duration" value="{{recipe.duration}}" />
   </div>
 
-  <div>
+  <div class="addMargin">
     update calories:
     <input type="text" name="calories" value="{{recipe.calories}}" />
   </div>
@@ -47,8 +47,8 @@
 
 {{!-- durationCategory --}}
 
-    <h1>update durationCategory: </h1>
-      <select name="durationCategory" value="{{recipe.durationCategory}}">
+    <h2>update duration category: </h2>
+      <select class="addMargin" name="durationCategory" value="{{recipe.durationCategory}}">
             <option> </option>
             <option {{#if isSomethingQuickSelected}}selected{{/if}}>Something quick</option>
             <option {{#if isIHaveTimeSelected}}selected{{/if}}>I have time</option>
@@ -59,8 +59,8 @@
 
 {{!-- calories --}}
 
-      <h1>update calories Category: </h1>
-          <select name="caloriesCategory" value="{{recipe.caloriesCategory}}">
+      <h2>update calories category: </h2>
+          <select class="addMargin" name="caloriesCategory" value="{{recipe.caloriesCategory}}">
               <option> </option>
               <option {{#if isLowInCaloriesSelected}}selected{{/if}}>Low in calories</option>
               <option {{#if isHighInCaloriesHighSelected}}selected{{/if}}>High in calories </option>
@@ -72,7 +72,7 @@
 {{!-- image --}}
 
 
-<h1>update Images here</h1>
+<h2>update Images here</h2>
 
 <input type="file" name="image" />
  <input type="submit" value="update" />

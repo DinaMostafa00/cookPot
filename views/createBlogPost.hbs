@@ -1,14 +1,12 @@
 <div class="adjustingPages">
   <div class="adjustingText">
-    <h1>Create a Blog Post </h1>
+    <h1 class="pageHeadings">Create a Blog Post </h1>
     {{#if errors.length}}
       <p> Can not create a blog post because:</p>
 
-      <ul>
-        {{#each errors}}
-          {{this}}
-        {{/each}}
-      </ul>
+      {{#each errors}}
+        <li class="errosColor"> {{this}} </li>
+      {{/each}}
 
     {{/if}}
 
@@ -48,7 +46,7 @@
       </div>
 
       <input
-        class="btn btn-primary input-group-btn"
+        class="btn btn-primary input-group-btn addMarginButton"
         type="submit"
         value="Create"
       />

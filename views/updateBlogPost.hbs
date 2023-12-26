@@ -6,7 +6,7 @@
 
   <ul>
     {{#each errors}}
-      {{this}}
+    <li class="errosColor"> {{this}} </li>
     {{/each}}
   </ul>
   
@@ -14,17 +14,17 @@
  
  
  <form action="/updateBlogPost/{{id}}" method="POST">
-  <div>
+  <div class="addMargin">
     update title:
     <input type="text" name="title" value="{{blogPost.title}}" />
   </div>
 
-  <div>
+  <div class="addMargin">
     update content:
     <input type="text" name="content" value="{{blogPost.content}}" />
   </div>
 
-  <div>
+  <div class="addMargin">
     update source:
     <input type="text" name="source" value="{{blogPost.source}}" />
   </div>

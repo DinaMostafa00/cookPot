@@ -1,18 +1,18 @@
 <div class="adjustingPages">
-  <div class="adjustingText">
-    {{#each errors}}
-      {{this}}
-    {{/each}}
 
-    {{#if errors.length}}
-      You can<a href="/login">login</a>
-      here
-    {{/if}}
+  {{#each errors}}
+    <li class="errosColor"> {{this}} </li>
+  {{/each}}
 
-    <h1> Are you sure you want to delete ?</h1>
+  {{#if errors.length}}
+    You can<a href="/login">login</a>
+    here
+  {{/if}}
 
-    <form action="/deleteComment/{{id}}/{{blogPostId}}" method="POST">
-      <input type="submit" value="delete" />
-    </form>
-  </div>
+  <h1> Are you sure you want to delete ?</h1>
+
+  <form action="/deleteComment/{{id}}/{{blogPostId}}" method="POST">
+    <input type="submit" value="delete" />
+  </form>
+
 </div>

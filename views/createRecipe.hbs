@@ -1,14 +1,15 @@
 <div class="adjustingPages">
   <div class="adjustingText">
-    <h1>Create a recipe</h1>
+    <h1 class="pageHeadings">Create a recipe</h1>
+
     {{#if errors.length}}
       <p> Can not create a recipe because:</p>
 
-      <ul>
+     
         {{#each errors}}
-          {{this}}
+         <li class="errosColor">  {{this}}  </li>
         {{/each}}
-      </ul>
+     
 
     {{/if}}
 

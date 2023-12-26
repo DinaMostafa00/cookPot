@@ -1,15 +1,16 @@
 <div class="adjustingPages">
   <div class="adjustingText">
+
     {{#if errors.length}}
-
-      {{#each errors}}
-        {{this}}
-      {{/each}}
-
+      <ul class="errosColor">
+        {{#each errors}}
+          {{this}}
+        {{/each}}
+      </ul>
     {{/if}}
 
     <form action="/search" method="get">
-      <h1>Looking for something spcific?</h1>
+      <h1 class="pageHeadings">Looking for something spcific?</h1>
       <section class="navbar-section">
         <div class="input-group input-inline">
           <input
@@ -23,7 +24,7 @@
         </div>
       </section>
 
-      <p> nothing in mind?</p>
+      <p class="pageHeadings"> nothing in mind?</p>
 
       <div class="form-group">
         <select class="form-select" name="duration">
@@ -41,7 +42,7 @@
 
         </select>
       </div>
-      <input type="submit" value="submit" />
+      <input type="submit" value="Search" />
 
     </form>
   </div>
