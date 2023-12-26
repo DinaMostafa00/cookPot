@@ -1,11 +1,11 @@
-<h1>Recipes</h1>
+<h1 class="addingMarginHeadings">Recipes</h1>
 
 {{#if recipes.length}}
 
   {{#each recipes}}
 
     <div class="card">
-      <div class="card-header">
+      <div class="card-header addingMargin">
         <div class="card-title h5">
           <a href="/recipes/{{id}}">
             {{title}}</a>
@@ -21,6 +21,6 @@
 
 {{else}}
 
-  <p> wait for upcoming recipes</p>
+  <p> Wait for our upcoming recipes</p>
 
 {{/if}}

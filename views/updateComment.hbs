@@ -1,32 +1,40 @@
-<h1>Update Comment</h1>
+<div class="adjustingPages">
+  <div class="adjustingText">
+    <h1>Update Comment</h1>
 
-{{#if errors.length}}
-  <p> Can not write a comment because:</p>
+    {{#if errors.length}}
+      <p> Can not write a comment because:</p>
 
-  <ul>
-    {{#each errors}}
-      {{this}}
-    {{/each}}
-  </ul>
+      <ul>
+        {{#each errors}}
+          {{this}}
+        {{/each}}
+      </ul>
 
-{{/if}}
+    {{/if}}
 
-<form action="/updateComment/{{id}}/{{comment.blogPostId}}" method="POST">
-  <div>
-    update Name:
-    <input type="text" name="commenterName" value="{{comment.commenterName}}" />
+    <form action="/updateComment/{{id}}/{{comment.blogPostId}}" method="POST">
+      <div>
+        update Name:
+        <input
+          type="text"
+          name="commenterName"
+          value="{{comment.commenterName}}"
+        />
+      </div>
+
+      <div>
+        update title:
+        <input type="text" name="title" value="{{comment.title}}" />
+      </div>
+
+      <div>
+        update comment:
+        <input type="text" name="comment" value="{{comment.comment}}" />
+      </div>
+
+      <input type="submit" value="update" />
+
+    </form>
   </div>
-
-  <div>
-    update title:
-    <input type="text" name="title" value="{{comment.title}}" />
-  </div>
-
-  <div>
-    update comment:
-    <input type="text" name="comment" value="{{comment.comment}}" />
-  </div>
-
-  <input type="submit" value="update" />
-
-</form>
+</div>

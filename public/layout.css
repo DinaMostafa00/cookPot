@@ -80,9 +80,15 @@
 }
 
 .adjustingPages {
+  width: 80%; /* Or any specific width you prefer */
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.adjustingText {
+  text-align: left;
   padding-left: 20%;
-  padding-right: 20%;
-  padding-bottom: 5%;
 }
 
 .recipeImgs {
@@ -93,4 +99,46 @@
 
 .inputFieldAdjustment {
   height: 10% !important;
+}
+
+.thin-font {
+  font-weight: 100;
+}
+
+.addingMargin {
+  margin-left: 2%;
+  margin-right: 2%;
+}
+
+.addingMarginHeadings {
+  margin-left: 3%;
+}
+
+@media (max-width: 768px) {
+  .heroText,
+  .heroText2 {
+    font-size: 2rem;
+  }
+}
+
+/* For tablets and smaller devices */
+@media (max-width: 768px) {
+  .adjustingPages {
+    width: 95%;
+  }
+
+  .adjustingText {
+    padding-left: 10%;
+  }
+}
+
+/* For mobile phones */
+@media (max-width: 480px) {
+  .adjustingPages {
+    width: 100%;
+  }
+
+  .adjustingText {
+    padding-left: 5%;
+  }
 }

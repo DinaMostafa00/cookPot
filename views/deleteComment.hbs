@@ -1,14 +1,18 @@
-{{#each errors}}
-  {{this}}
-{{/each}}
+<div class="adjustingPages">
+  <div class="adjustingText">
+    {{#each errors}}
+      {{this}}
+    {{/each}}
 
-{{#if errors.length}}
-  You can<a href="/login">login</a>
-  here
-{{/if}}
+    {{#if errors.length}}
+      You can<a href="/login">login</a>
+      here
+    {{/if}}
 
-<h1> Are you sure you want to delete ?</h1>
+    <h1> Are you sure you want to delete ?</h1>
 
-<form action="/deleteComment/{{id}}/{{blogPostId}}" method="POST">
-  <input type="submit" value="delete" />
-</form>
+    <form action="/deleteComment/{{id}}/{{blogPostId}}" method="POST">
+      <input type="submit" value="delete" />
+    </form>
+  </div>
+</div>

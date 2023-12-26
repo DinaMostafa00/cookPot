@@ -1,11 +1,15 @@
-<p> here what we found:</p>
+<div class="adjustingPages">
+  <div class="adjustingText">
+    <p> here what we found:</p>
 
-{{#if recipes.length}}
+    {{#if recipes.length}}
 
-  {{#each recipes}}
-    <a href="/recipes/{{id}}"> {{title}} </a>
-  {{/each}}
+      {{#each recipes}}
+        <a href="/recipes/{{id}}"> {{title}} </a>
+      {{/each}}
 
-{{else}}
-  <p> no match were found</p>
-{{/if}}
+    {{else}}
+      <p> no match were found</p>
+    {{/if}}
+  </div>
+</div>

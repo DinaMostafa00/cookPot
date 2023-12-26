@@ -1,3 +1,6 @@
+   <div class="adjustingPages">
+  <div class="adjustingText">
+
    <h1>Update Recipe</h1>
 {{#if errors.length}}
       <p> Can not write a comment because:</p>
@@ -41,27 +44,39 @@
     <input type="text" name="calories" value="{{recipe.calories}}" />
   </div>
 
-<h1>update durationCategory: </h1>
-  <select name="durationCategory" value="{{recipe.durationCategory}}">
-      <option> </option>
-      <option {{#if isSomethingQuickSelected}}selected{{/if}}>Something quick</option>
-      <option {{#if isIHaveTimeSelected}}selected{{/if}}>I have time</option>
-    </select>
-  </div>
+
+{{!-- durationCategory --}}
+
+    <h1>update durationCategory: </h1>
+      <select name="durationCategory" value="{{recipe.durationCategory}}">
+            <option> </option>
+            <option {{#if isSomethingQuickSelected}}selected{{/if}}>Something quick</option>
+            <option {{#if isIHaveTimeSelected}}selected{{/if}}>I have time</option>
+      </select>
 
 
-<h1>update calories Category: </h1>
- <select name="caloriesCategory" value="{{recipe.caloriesCategory}}">
-      <option> </option>
-      <option {{#if isLowInCaloriesSelected}}selected{{/if}}>Low in calories</option>
-      <option {{#if isHighInCaloriesHighSelected}}selected{{/if}}>High in calories </option>
-    </select>
-  </div>
 
 
+{{!-- calories --}}
+
+      <h1>update calories Category: </h1>
+          <select name="caloriesCategory" value="{{recipe.caloriesCategory}}">
+              <option> </option>
+              <option {{#if isLowInCaloriesSelected}}selected{{/if}}>Low in calories</option>
+              <option {{#if isHighInCaloriesHighSelected}}selected{{/if}}>High in calories </option>
+            </select>
+     
+
+
+
+{{!-- image --}}
 
 
 <h1>update Images here</h1>
 
 <input type="file" name="image" />
  <input type="submit" value="update" />
+
+
+    </div>
+</div>

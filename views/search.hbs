@@ -1,45 +1,48 @@
-{{#if errors.length}}
+<div class="adjustingPages">
+  <div class="adjustingText">
+    {{#if errors.length}}
 
-  {{#each errors}}
-    {{this}}
-  {{/each}}
+      {{#each errors}}
+        {{this}}
+      {{/each}}
 
-{{/if}}
+    {{/if}}
 
-<form action="/search" method="get">
-  <p> looking for something spcific ?</p>
+    <form action="/search" method="get">
+      <h1>Looking for something spcific?</h1>
+      <section class="navbar-section">
+        <div class="input-group input-inline">
+          <input
+            class="form-input"
+            type="text"
+            placeholder="search"
+            name="search"
+            value="{{search}}"
+          />
 
-  <section class="navbar-section">
-    <div class="input-group input-inline">
-      <input
-        class="form-input"
-        type="text"
-        placeholder="search"
-        name="search"
-        value="{{search}}"
-      />
+        </div>
+      </section>
 
-    </div>
-  </section>
+      <p> nothing in mind?</p>
 
-  <p> nothing in mind?</p>
+      <div class="form-group">
+        <select class="form-select" name="duration">
+          <option></option>
+          <option>Something quick</option>
+          <option>I have time</option>
+        </select>
+      </div>
 
-  <div class="form-group">
-    <select class="form-select" name="duration">
-      <option></option>
-      <option>Something quick</option>
-      <option>I have time</option>
-    </select>
+      <div class="form-group">
+        <select class="form-select" name="calories">
+          <option></option>
+          <option>Low in calories</option>
+          <option>High in calories </option>
+
+        </select>
+      </div>
+      <input type="submit" value="submit" />
+
+    </form>
   </div>
-
-  <div class="form-group">
-    <select class="form-select" name="calories">
-      <option></option>
-      <option>Low in calories</option>
-      <option>High in calories </option>
-
-    </select>
-  </div>
-  <input type="submit" value="submit" />
-
-</form>
+</div>
