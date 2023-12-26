@@ -14,7 +14,8 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/DinaMostafa96/DinaPortfolio/issues"
+    "url": "https://github.com/DinaMostafa96/DinaPortfolio/issues",
+    "vercel-buils": "eco hello"
   },
   "homepage": "https://github.com/DinaMostafa96/DinaPortfolio#readme",
   "dependencies": {
